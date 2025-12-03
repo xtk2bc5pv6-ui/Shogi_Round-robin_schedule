@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>将棋 3人総当たり戦 星取表</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        /* 入力エリア */
+        .player-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .player-inputs input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .match-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .match-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .match-row select {
+            padding: 5px;
+            font-size: 1rem;
+        }
+        
+        /* 星取表 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .rank-1 { background-color: #fff9c4; } /* 1位は薄い金 */
+        
+        /* 勝敗の色 */
+        .win { color: #d32f2f; font-weight: bold; } /* 赤 */
+        .loss { color: #1976d2; } /* 青 */
+        
+        button.reset-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button.reset-btn:hover { background-color: #444; }
+    </style>
+</head>
+<body>
+
+    <h1>将棋 3人総当たり戦 管理表</h1>
+
+    <div class="card">
+        <h2>対局者名</h2>
+        <div class="player-inputs">
+            <input type="text" id="p1Name" value="Aさん" oninput="updateNames()">
+            <input type="text" id="p2Name" value="Bさん" oninput="updateNames()">
+            <input type="text" id="p3Name" value="Cさん" oninput="updateNames()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>対局結果入力</h2>
+        <div class="match-list">
+            <div class="match-row">
+                <span id="labelMatch1">A vs B</span>
+                <select id="match1" onchange="calculate()">
+                    <option value="none">未対局</option>
+                    <option value="p1">A 勝ち</option>
+                    <option value="p2">B 勝ち</option>
+                </select>
+            </div>
+            <div class="match-row">
+                <span id="labelMatch2">B vs C</span>
+                <select id="match2" onchange="calculate()">
+                    <option value="none">未対局</option>
+                    <option value="p2">B 勝ち</option>
+                    <option value="p3">C 勝ち</option>
+                </select>
+            </div>
+            <div class="match-row">
+                <span id="labelMatch3">C vs A</span>
+                <select id="match3" onchange="calculate()">
+                    <option value="none">未対局</option>
+                    <option value="p3">C 勝ち</option>
+                    <option value="p1">A 勝ち</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>順位・星取表</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>順位</th>
+                    <th>氏名</th>
+                    <th>勝</th>
+                    <th>対戦結果</th>
+                </tr>
+            </thead>
+            <tbody id="rankingBody">
+                </tbody>
+        </table>
+    </div>
+
+    <button class="reset-btn" onclick="resetAll()">リセット</button>
+
+    <script>
+        // 初期データ
+        let players = [
+            { id: 'p1', name: 'Aさん', wins: 0, results: {} },
+            { id: 'p2', name: 'Bさん', wins: 0, results: {} },
+            { id: 'p3', name: 'Cさん', wins: 0, results: {} }
+        ];
+
+        // 名前更新
+        function updateNames() {
+            players[0].name = document.getElementById('p1Name').value;
+            players[1].name = document.getElementById('p2Name').value;
+            players[2].name = document.getElementById('p3Name').value;
+            
+            updateLabels();
+            calculate(); // 表の再描画
+        }
+
+        // ラベル（〇〇 vs 〇〇）の更新
+        function updateLabels() {
+            const matchOptions = [
+                { sel: document.getElementById('match1'), pA: 0, pB: 1 },
+                { sel: document.getElementById('match2'), pA: 1, pB: 2 },
+                { sel: document.getElementById('match3'), pA: 2, pB: 0 }
+            ];
+
+            document.getElementById('labelMatch1').textContent = `${players[0].name} vs ${players[1].name}`;
+            document.getElementById('labelMatch2').textContent = `${players[1].name} vs ${players[2].name}`;
+            document.getElementById('labelMatch3').textContent = `${players[2].name} vs ${players[0].name}`;
+
+            // セレクトボックスの選択肢名も更新
+            matchOptions.forEach(m => {
+                m.sel.options[1].text = `${players[m.pA].name} 勝ち`;
+                m.sel.options[2].text = `${players[m.pB].name} 勝ち`;
+            });
+        }
+
+        // 計算と表示のメイン処理
+        function calculate() {
+            // スコアリセット
+            players.forEach(p => {
+                p.wins = 0;
+                p.results = {}; // 対戦相手ID: 結果('o', 'x', '-')
+            });
+
+            // 対局結果の取得
+            const m1 = document.getElementById('match1').value; // p1 vs p2
+            const m2 = document.getElementById('match2').value; // p2 vs p3
+            const m3 = document.getElementById('match3').value; // p3 vs p1
+
+            // 勝敗判定ロジック
+            const processMatch = (val, pA_idx, pB_idx) => {
+                const pA = players[pA_idx];
+                const pB = players[pB_idx];
+
+                if (val === pA.id) {
+                    pA.wins++;
+                    pA.results[pB.id] = '○';
+                    pB.results[pA.id] = '●';
+                } else if (val === pB.id) {
+                    pB.wins++;
+                    pB.results[pA.id] = '●';
+                    pA.results[pB.id] = '○';
+                } else {
+                    pA.results[pB.id] = '-';
+                    pB.results[pA.id] = '-';
+                }
+            };
+
+            processMatch(m1, 0, 1);
+            processMatch(m2, 1, 2);
+            processMatch(m3, 2, 0);
+
+            // 並べ替え用の配列をコピー（元のplayersの順番を変えると入力欄とズレるため）
+            let ranking = JSON.parse(JSON.stringify(players));
+
+            // ソート：勝ち数が多い順
+            ranking.sort((a, b) => b.wins - a.wins);
+
+            // HTML生成
+            const tbody = document.getElementById('rankingBody');
+            tbody.innerHTML = '';
+
+            ranking.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                if (index === 0) tr.classList.add('rank-1');
+
+                // 対戦結果の文字列作成（自分以外の相手との勝敗を表示）
+                // ※順位順ではなく、単純に誰に勝ったかを表示する簡易形式にしています
+                let details = [];
+                ranking.forEach(opponent => {
+                    if (p.id !== opponent.id) {
+                        const res = p.results[opponent.id];
+                        let colorClass = res === '○' ? 'win' : (res === '●' ? 'loss' : '');
+                        if (res !== '-') {
+                            details.push(`<span class="${colorClass}">${res}</span> ${opponent.name}`);
+                        }
+                    }
+                });
+
+                tr.innerHTML = `
+                    <td>${index + 1}位</td>
+                    <td style="font-weight:bold;">${p.name}</td>
+                    <td>${p.wins}勝</td>
+                    <td style="font-size:0.9rem;">${details.join('<br>') || '対局なし'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetAll() {
+            document.getElementById('match1').value = "none";
+            document.getElementById('match2').value = "none";
+            document.getElementById('match3').value = "none";
+            calculate();
+        }
+
+        // 初回実行
+        updateNames();
+    </script>
+</body>
+</html>
