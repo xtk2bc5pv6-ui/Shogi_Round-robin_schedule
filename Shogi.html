@@ -157,11 +157,11 @@
         }
         button.excel-btn:hover { background: var(--excel-color); color: #fff; }
         
-        /* 作成ボタン用 */
+        /* 初期データExcel作成ボタン */
         button.create-excel-btn {
             background: #000; color: #ffd700; border: 2px solid #ffd700;
             padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold;
-            margin-top: 10px;
+            margin-top: 10px; display: flex; align-items: center; gap: 8px; justify-content: center;
         }
         button.create-excel-btn:hover { background: #ffd700; color: #000; }
 
@@ -185,7 +185,7 @@
             </div>
             <div class="title-group">
                 <h1>将棋 通算勝敗表</h1>
-                <div class="subtitle">SHOGI BATTLE LOG (Excel管理版)</div>
+                <div class="subtitle">SHOGI BATTLE LOG</div>
             </div>
         </div>
         <div class="last-updated" id="lastUpdatedDisplay">Last Updated: ----/--/-- --:--</div>
@@ -257,8 +257,7 @@
         <div class="card">
             <h2>Excelファイルでデータ管理</h2>
             <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
-                ※サイトを閉じる前に「Excel保存」を推奨します。<br>
-                ※「Excel読込」で保存したデータを復元できます。
+                ※初期化や復元はExcelファイルの読み書きで行ってください。
             </p>
             <div class="control-panel">
                 <button class="excel-btn" onclick="exportExcel()">
@@ -271,7 +270,7 @@
             </div>
             
             <div style="text-align:center; margin-top:20px; border-top:1px dashed #333; padding-top:10px;">
-                <p style="color:#ffd700; font-size:0.8rem; margin-bottom:5px;">初期データ（吉谷・石井山・森岡）のExcelが欲しい場合↓</p>
+                <p style="color:#ffd700; font-size:0.8rem; margin-bottom:5px;">初期データ（吉谷・石井山・森岡）のExcelファイルを作成します</p>
                 <button class="create-excel-btn" onclick="downloadInitialExcel()">
                     🛠️ 初期データ入りExcelを作成・保存
                 </button>
@@ -286,9 +285,14 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
-        const STORAGE_KEY = 'shogiInfiniteV11_Excel';
+        // ストレージキーを更新してクリーンスタート
+        const STORAGE_KEY = 'shogiInfiniteV12_Final';
 
-        // 初期化処理
+        // ページ読み込み完了後に初期化（画面真っ暗防止）
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
+
         function init() {
             // まずLocalStorageをチェック
             const json = localStorage.getItem(STORAGE_KEY);
@@ -357,6 +361,11 @@
             }
 
             // Excel生成
+            if (typeof XLSX === 'undefined') {
+                alert("Excel機能の読み込み中です。少し待ってから再度押してください。");
+                return;
+            }
+
             const matchData = initMatches.map(m => {
                 const wName = initPlayers.find(p => p.id === m.winner)?.name || "不明";
                 const lName = initPlayers.find(p => p.id === m.loser)?.name || "不明";
@@ -375,6 +384,7 @@
 
         // --- Excel書き出し (Export) ---
         function exportExcel() {
+            if (typeof XLSX === 'undefined') { alert("Excel機能準備中..."); return; }
             const matchData = matches.map(m => {
                 const wName = players.find(p => p.id === m.winner)?.name || "不明";
                 const lName = players.find(p => p.id === m.loser)?.name || "不明";
@@ -685,8 +695,6 @@
             const el = document.getElementById('saveStatus');
             if(el) el.innerText = "自動保存中...";
         }
-
-        init();
     </script>
 </body>
 </html>
