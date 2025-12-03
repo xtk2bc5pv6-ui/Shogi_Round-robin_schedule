@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>将棋 通算勝敗表</title>
+    <title>将棋 通算勝敗表 (Excel管理版)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
@@ -18,6 +19,7 @@
             --neon-pink: #ff00ff;
             --text-color: #e0e0e0;
             --danger-color: #ff3333;
+            --excel-color: #217346;
         }
         body {
             font-family: "M PLUS Rounded 1c", sans-serif;
@@ -32,12 +34,8 @@
 
         /* ヘッダー */
         .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--neon-green);
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid var(--neon-green);
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
@@ -58,8 +56,7 @@
         /* カード */
         .card {
             background: var(--card-bg); padding: 20px; border-radius: 12px;
-            border: 1px solid var(--neon-green);
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+            border: 1px solid var(--neon-green); box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
             margin-bottom: 25px; position: relative;
         }
         h2 {
@@ -125,9 +122,7 @@
         .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
         .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; }
         
-        .charts-container {
-            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
-        }
+        .charts-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
         .chart-wrapper {
             flex: 1; min-width: 140px; max-width: 220px; text-align: center;
             background: #111; padding: 10px; border-radius: 8px; border: 1px solid #333;
@@ -151,9 +146,15 @@
         button.delete-btn:hover { background: var(--danger-color); color: #fff; }
         button.reset-btn { display: block; width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #666; padding: 10px; cursor: pointer; border-radius: 6px; }
         button.reset-btn:hover { background: #333; color: #fff; }
-        button.restore-btn { display: block; width: 100%; margin-top: 10px; background: #222; color: #ffd700; border: 1px solid #ffd700; padding: 10px; cursor: pointer; border-radius: 6px; font-weight: bold;}
-        button.restore-btn:hover { background: #ffd700; color: #000; }
         .delete-history-btn { background: #333; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+        /* Excelボタン専用 */
+        button.excel-btn {
+            background: #000; color: var(--excel-color); border: 2px solid var(--excel-color);
+            padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+        button.excel-btn:hover { background: var(--excel-color); color: #fff; }
 
         @media (max-width: 600px) {
             .header-container { flex-direction: column; text-align: center; gap: 10px; }
@@ -175,7 +176,7 @@
             </div>
             <div class="title-group">
                 <h1>将棋 通算勝敗表</h1>
-                <div class="subtitle">SHOGI BATTLE LOG</div>
+                <div class="subtitle">SHOGI BATTLE LOG (Excel版)</div>
             </div>
         </div>
         <div class="last-updated" id="lastUpdatedDisplay">Last Updated: ----/--/-- --:--</div>
@@ -245,13 +246,23 @@
         </div>
 
         <div class="card">
-            <h2>データのバックアップ・復元</h2>
+            <h2>Excelファイルでデータ管理</h2>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
+                ※サイトを閉じる前に「Excel保存」を推奨します。<br>
+                ※「Excel読込」で保存したデータを復元できます。
+            </p>
             <div class="control-panel">
-                <button class="action-btn" onclick="exportData()">💾 データを保存</button>
-                <button class="action-btn" onclick="document.getElementById('importFile').click()">📂 データを読み込む</button>
-                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
+                <button class="excel-btn" onclick="exportExcel()">
+                    <span>📥 Excel保存 (ダウンロード)</span>
+                </button>
+                <button class="excel-btn" onclick="document.getElementById('excelInput').click()">
+                    <span>📤 Excel読込 (ロード)</span>
+                </button>
+                <input type="file" id="excelInput" style="display:none" accept=".xlsx, .xls" onchange="importExcel(this)">
             </div>
-            <button class="restore-btn" onclick="restorePresetData()">⚠️ 初期データ（吉谷・石井山・森岡）に戻す</button>
+            <div style="text-align:center; margin-top:10px;">
+                <button class="reset-btn" onclick="restorePresetData()">⚠️ データが消えた時に初期データに戻すボタン</button>
+            </div>
         </div>
         
         <button class="reset-btn" onclick="resetData()">全データをリセット（完全に空にする）</button>
@@ -263,21 +274,23 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
-        // ★ バージョンを変更してリフレッシュ（V9） ★
-        const STORAGE_KEY = 'shogiInfiniteV9';
+        // LocalStorageも一応使うが、Excelが正とする
+        const STORAGE_KEY = 'shogiInfiniteV10_Excel';
 
+        // 初期化処理
         function init() {
+            // まずLocalStorageをチェック
             const json = localStorage.getItem(STORAGE_KEY);
             if (json) {
                 try {
                     const d = JSON.parse(json);
-                    if (d.players) players = d.players;
+                    if (d.players && d.players.length > 0) players = d.players;
                     if (d.matches) matches = d.matches;
                     if (d.lastUpdated) lastUpdated = d.lastUpdated;
                 } catch(e) { console.error(e); }
             }
             
-            // データが空なら強制的にプリセットロード
+            // データが空なら「初期データ」をロード
             if (players.length === 0) {
                 loadPresetData();
             }
@@ -285,7 +298,7 @@
             renderAll();
         }
 
-        // 初期データ生成ロジック
+        // 初期データ（吉谷・石井山・森岡）
         function loadPresetData() {
             players = [
                 { id: 0, name: '吉谷 悠' },
@@ -310,15 +323,108 @@
             }
         }
 
-        function restorePresetData() {
-            if(confirm("現在のデータをすべて消去し、\n吉谷・石井山・森岡の初期成績に戻しますか？")) {
-                loadPresetData();
-                saveData();
-                renderAll();
-                alert("初期データを復元しました！");
-            }
+        // --- Excel書き出し (Export) ---
+        function exportExcel() {
+            // 1. 対戦履歴シート作成
+            // "勝者", "敗者", "日時" の形式にする
+            const matchData = matches.map(m => {
+                const wName = players.find(p => p.id === m.winner)?.name || "不明";
+                const lName = players.find(p => p.id === m.loser)?.name || "不明";
+                return {
+                    "勝者": wName,
+                    "敗者": lName,
+                    "日時": new Date(m.timestamp).toLocaleString()
+                };
+            });
+
+            // 2. プレイヤーリストシート作成（ID管理用）
+            const playerData = players.map(p => ({
+                "ID": p.id,
+                "名前": p.name
+            }));
+
+            // Workbook作成
+            const wb = XLSX.utils.book_new();
+            
+            const wsMatches = XLSX.utils.json_to_sheet(matchData);
+            XLSX.utils.book_append_sheet(wb, wsMatches, "対戦履歴");
+
+            const wsPlayers = XLSX.utils.json_to_sheet(playerData);
+            XLSX.utils.book_append_sheet(wb, wsPlayers, "参加者リスト");
+
+            // ファイル保存
+            const dateStr = new Date().toISOString().slice(0,10);
+            XLSX.writeFile(wb, `将棋勝敗表_${dateStr}.xlsx`);
         }
 
+        // --- Excel読み込み (Import) ---
+        function importExcel(input) {
+            const file = input.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+
+                    // シート確認
+                    const sheetMatches = wb.Sheets["対戦履歴"];
+                    const sheetPlayers = wb.Sheets["参加者リスト"];
+
+                    if(!sheetMatches || !sheetPlayers) {
+                        alert("エラー: 必要なシート（対戦履歴, 参加者リスト）が見つかりません。");
+                        return;
+                    }
+
+                    // データ変換
+                    const jsonPlayers = XLSX.utils.sheet_to_json(sheetPlayers);
+                    const jsonMatches = XLSX.utils.sheet_to_json(sheetMatches);
+
+                    if(confirm("Excelデータを読み込んで、現在のデータを上書きしますか？")) {
+                        // プレイヤー再構築
+                        players = jsonPlayers.map(row => ({
+                            id: row["ID"],
+                            name: row["名前"]
+                        }));
+
+                        // マッチ再構築
+                        matches = [];
+                        jsonMatches.forEach(row => {
+                            const wName = row["勝者"];
+                            const lName = row["敗者"];
+                            // 名前からIDを逆引き
+                            const wObj = players.find(p => p.name === wName);
+                            const lObj = players.find(p => p.name === lName);
+                            
+                            if(wObj && lObj) {
+                                matches.push({
+                                    winner: wObj.id,
+                                    loser: lObj.id,
+                                    timestamp: row["日時"] ? new Date(row["日時"]).getTime() : Date.now()
+                                });
+                            }
+                        });
+
+                        // 最終更新
+                        const now = new Date();
+                        lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+                        saveData();
+                        renderAll();
+                        alert("Excelデータの読み込みが完了しました！");
+                    }
+
+                } catch(err) {
+                    console.error(err);
+                    alert("読み込みに失敗しました。ファイルが正しいか確認してください。");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            input.value = ''; // リセット
+        }
+
+        // --- メインロジック ---
         function renderAll() {
             try {
                 updateSelectOptions();
@@ -328,6 +434,15 @@
                 renderLastUpdated(); 
                 saveData();
             } catch(e) { console.error("Rendering Error:", e); }
+        }
+
+        function restorePresetData() {
+            if(confirm("現在のデータを破棄して、初期データに戻しますか？")) {
+                loadPresetData();
+                saveData();
+                renderAll();
+                alert("初期データを復元しました。");
+            }
         }
 
         function updateSelectOptions() {
@@ -437,7 +552,6 @@
             statsData.forEach(p => {
                 const card = document.createElement('div'); card.className = 'stats-card';
                 
-                // 対戦相手別（個別グラフ）
                 const opponents = players.filter(opp => opp.id !== p.id);
                 let chartsHtml = `<div class="charts-container">`;
                 
@@ -546,28 +660,7 @@
             const removedId = players.length - 1; players.pop();
             matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
         }
-        function exportData() {
-            const data = { players, matches, lastUpdated };
-            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `shogi_data_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
-        }
-        function importData(input) {
-            const file = input.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.players && data.matches) {
-                        if(confirm("復元しますか？")) {
-                            players = data.players; matches = data.matches; lastUpdated = data.lastUpdated || "";
-                            saveData(); renderAll(); alert("完了！");
-                        }
-                    } else { alert("形式エラー"); }
-                } catch(err) { alert("エラー"); }
-            };
-            reader.readAsText(file); input.value = '';
-        }
+
         function saveData() {
             const data = { players, matches, lastUpdated };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -575,7 +668,7 @@
             if(el) el.innerText = "自動保存中...";
         }
         function resetData() {
-            if(confirm("本当にデータを全て消しますか？\n（空っぽになります）")) {
+            if(confirm("本当に全データを空にしますか？\n（初期データも含めて消えます）")) {
                 localStorage.removeItem(STORAGE_KEY); location.reload();
             }
         }
