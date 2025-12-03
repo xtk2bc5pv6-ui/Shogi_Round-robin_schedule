@@ -34,12 +34,8 @@
 
         /* ヘッダー */
         .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--neon-green);
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid var(--neon-green);
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
@@ -117,4 +113,12 @@
 
         /* マトリクス */
         .matrix-scroll { overflow-x: auto; }
-        table.matrix-table { width: 1
+        table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
+        table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 10px; text-align: center; font-size: 1rem; }
+        table.matrix-table th { background: #000; color: var(--neon-green); }
+        .diagonal-cell { background: #111; }
+
+        /* グラフエリア */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .stats-header { text-align: center; border-bottom: 1px solid #3
