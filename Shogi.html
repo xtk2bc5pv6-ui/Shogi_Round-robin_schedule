@@ -599,4 +599,128 @@
         }
 
         function renderCharts(statsData) {
-            const
+            const container = document.getElementById('statsList');
+            if(!container) return;
+            chartInstances.forEach(c => c.destroy()); chartInstances = []; container.innerHTML = '';
+            
+            statsData.forEach(p => {
+                const card = document.createElement('div'); card.className = 'stats-card';
+                
+                const opponents = players.filter(opp => opp.id !== p.id);
+                let chartsHtml = `<div class="charts-container">`;
+                
+                opponents.forEach(opp => {
+                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
+                    const win = p.vs[opp.id];
+                    const loss = statsData[opp.id].vs[p.id];
+                    
+                    chartsHtml += `
+                        <div class="chart-wrapper">
+                            <div class="chart-title">vs ${opp.name}</div>
+                            <div style="height:140px;">
+                                <canvas id="${canvasId}"></canvas>
+                            </div>
+                            <div class="chart-score">
+                                <span class="score-win">${win}勝</span> - <span class="score-loss">${loss}敗</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                chartsHtml += `</div>`;
+
+                card.innerHTML = `<div class="stats-header">${p.name}</div>` + chartsHtml;
+                container.appendChild(card);
+
+                opponents.forEach(opp => {
+                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
+                    const ctx = document.getElementById(canvasId).getContext('2d');
+                    const win = p.vs[opp.id];
+                    const loss = statsData[opp.id].vs[p.id];
+
+                    let chartData = [win, loss];
+                    let chartColors = ['#ff00ff', '#00ffff'];
+                    if (win === 0 && loss === 0) {
+                        chartData = [1]; chartColors = ['#333']; 
+                    }
+
+                    chartInstances.push(new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Win', 'Loss'],
+                            datasets: [{
+                                data: chartData,
+                                backgroundColor: chartColors,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: (win > 0 || loss > 0) }
+                            }
+                        }
+                    }));
+                });
+            });
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
+            const reversedMatches = [...matches].reverse();
+            reversedMatches.forEach((m, revIndex) => {
+                const originalIndex = matches.length - 1 - revIndex;
+                const winnerName = players[m.winner] ? players[m.winner].name : "不明";
+                const loserName = players[m.loser] ? players[m.loser].name : "不明";
+                const div = document.createElement('div'); div.className = 'history-item';
+                div.innerHTML = `<div class="history-text"><span style="color:var(--neon-pink)">○ ${winnerName}</span> vs <span style="color:var(--neon-blue)">● ${loserName}</span></div><button class="delete-history-btn" onclick="deleteMatch(${originalIndex})">取消</button>`;
+                list.appendChild(div);
+            });
+            if (matches.length === 0) list.innerHTML = '<div style="color:#666; text-align:center; padding:10px;">対局履歴なし</div>';
+        }
+
+        function renderLastUpdated() {
+            const el = document.getElementById('lastUpdatedDisplay');
+            if(el) el.innerText = lastUpdated ? `Last Updated: ${lastUpdated}` : `Last Updated: ----/--/-- --:--`;
+        }
+
+        function deleteMatch(index) {
+            if(confirm("取り消しますか？")) {
+                matches.splice(index, 1);
+                const now = new Date();
+                lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                renderAll();
+            }
+        }
+
+        function renderPlayerInputs() {
+            const container = document.getElementById('playerList');
+            if(!container) return;
+            container.innerHTML = '';
+            players.forEach((p, index) => {
+                const div = document.createElement('div'); div.className = 'player-input-row';
+                div.innerHTML = `<span style="color:#666; width:30px;">#${index + 1}</span><input type="text" value="${p.name}" oninput="updateName(${index}, this.value)">`;
+                container.appendChild(div);
+            });
+        }
+        function updateName(idx, val) { players[idx].name = val; updateSelectOptions(); calculateAndRender(); saveData(); }
+        function addPlayer() { const newId = players.length; players.push({ id: newId, name: `プレイヤー${newId + 1}` }); renderAll(); }
+        function removePlayer() {
+            if (players.length <= 2) { alert("最低2名必要です"); return; }
+            if(!confirm("削除しますか？")) return;
+            const removedId = players.length - 1; players.pop();
+            matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
+        }
+
+        function saveData() {
+            const data = { players, matches, lastUpdated };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            const el = document.getElementById('saveStatus');
+            if(el) el.innerText = "自動保存中...";
+        }
+    </script>
+</body>
+</html>
