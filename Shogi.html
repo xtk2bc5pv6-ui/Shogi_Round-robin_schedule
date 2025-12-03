@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>将棋 通算勝敗表</title>
+    <title>将棋 通算勝敗表 (完全版)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,135 +23,580 @@
         }
         body {
             font-family: "M PLUS Rounded 1c", sans-serif;
+            max-width: 900px;
             margin: 0 auto;
+            padding: 20px;
             background-color: var(--bg-color);
             color: var(--neon-green);
             text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
-            /* 基本はPC向けの余白 */
-            padding: 40px 20px;
-            max-width: 1000px;
             padding-bottom: 150px;
         }
 
-        /* --- ヘッダー --- */
+        /* 読み込み画面 */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; color: var(--neon-green); font-size: 1.5rem;
+        }
+
+        /* ヘッダー */
         .header-container {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid var(--neon-green);
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid var(--neon-green);
         }
-        .header-left { display: flex; align-items: center; gap: 20px; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
-            width: 80px; height: 80px; fill: none; stroke: var(--neon-green); stroke-width: 3;
+            width: 60px; height: 60px; fill: none; stroke: var(--neon-green); stroke-width: 3;
             filter: drop-shadow(0 0 5px var(--neon-green));
         }
         .title-group { display: flex; flex-direction: column; }
         h1 {
-            font-size: 2.5rem; margin: 0; line-height: 1.2; color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green); font-weight: 800; letter-spacing: 3px;
+            font-size: 2.2rem; margin: 0; line-height: 1.2; color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green); font-weight: 800; letter-spacing: 2px;
         }
         .subtitle {
-            font-size: 1.2rem; color: var(--neon-blue); letter-spacing: 4px; font-weight: 700;
-            text-shadow: 0 0 5px var(--neon-blue); margin-top: 5px;
+            font-size: 1rem; color: var(--neon-blue); letter-spacing: 3px; font-weight: 700;
+            text-shadow: 0 0 5px var(--neon-blue);
         }
-        .last-updated { font-size: 0.9rem; color: #888; text-align: right; align-self: flex-end; }
+        .last-updated { font-size: 0.8rem; color: #888; text-align: right; align-self: flex-end; }
 
-        /* --- カード共通 --- */
+        /* カード */
         .card {
-            background: var(--card-bg); padding: 30px; border-radius: 16px;
+            background: var(--card-bg); padding: 20px; border-radius: 12px;
             border: 1px solid var(--neon-green);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.1);
-            margin-bottom: 40px; position: relative;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+            margin-bottom: 25px; position: relative;
         }
         h2 {
-            font-size: 1.5rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 15px; margin-top: 0; margin-bottom: 20px;
+            font-size: 1.3rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
             color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); font-weight: 700;
         }
 
-        /* --- 入力エリア --- */
+        /* 入力エリア */
         .input-area {
-            display: flex; gap: 30px; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; border: 1px solid #444;
+            display: flex; gap: 15px; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid #444;
         }
-        .input-group { display: flex; flex-direction: column; width: 40%; }
-        .input-group label { font-size: 1.2rem; margin-bottom: 8px; }
-        .vs-label { font-size: 2rem; font-weight: 800; color: #666; }
+        .input-group { display: flex; flex-direction: column; width: 45%; }
+        .vs-label { font-size: 1.5rem; font-weight: 800; color: #666; margin-top: 20px; }
         select.player-select {
-            width: 100%; padding: 15px; background: #222; color: #fff;
-            border: 2px solid var(--neon-green); border-radius: 8px; font-size: 1.2rem;
-            font-family: inherit; cursor: pointer; transition: 0.3s;
+            width: 100%; padding: 12px; background: #222; color: #fff;
+            border: 1px solid var(--neon-green); border-radius: 8px; font-size: 1.1rem;
+            font-family: inherit; cursor: pointer;
         }
-        select.player-select:focus { outline: none; box-shadow: 0 0 15px var(--neon-green); }
-        
         button.register-btn {
-            width: 100%; margin-top: 20px; padding: 18px; background: var(--neon-green);
-            color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.4rem;
+            width: 100%; margin-top: 15px; padding: 15px; background: var(--neon-green);
+            color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.2rem;
             cursor: pointer; box-shadow: 0 0 15px var(--neon-green); font-family: inherit; transition: 0.2s;
         }
-        button.register-btn:hover { background: #fff; transform: scale(1.01); box-shadow: 0 0 25px var(--neon-green); }
+        button.register-btn:hover { background: #fff; transform: scale(1.02); }
 
-        /* --- バナー・バッジ --- */
+        /* バナー・バッジ */
         .streak-banner {
-            background: rgba(0, 0, 0, 0.6); border: 2px dashed var(--neon-pink); color: var(--neon-pink);
-            padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem;
-            display: none; text-shadow: 0 0 8px var(--neon-pink); animation: pulse 2s infinite;
+            background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
+            padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
+            display: none; text-shadow: 0 0 5px var(--neon-pink); animation: pulse 2s infinite;
         }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(255, 0, 255, 0); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 0, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0); }
         }
-        .badge { display: inline-block; font-size: 0.9rem; padding: 3px 8px; border-radius: 4px; margin-left: 8px; }
-        .badge-crown { font-size: 1.4rem; }
+        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .badge-crown { font-size: 1.2rem; }
         .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); }
         .badge-rain { border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); }
 
-        /* --- テーブル --- */
-        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* テーブル */
+        .table-responsive { overflow-x: auto; }
         table.ranking-table {
-            width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; min-width: 600px; /* 横スクロールさせるため */
+            width: 100%; min-width: 500px; border-collapse: separate; border-spacing: 0; margin-top: 10px;
             border: 1px solid var(--neon-green); border-radius: 8px; overflow: hidden;
         }
-        table.ranking-table th, table.ranking-table td { padding: 15px 10px; text-align: center; border-bottom: 1px solid #333; font-size: 1.1rem; }
-        table.ranking-table th { background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 2px solid var(--neon-green); }
-        .rank-1 { background-color: rgba(57, 255, 20, 0.1); font-weight: bold; font-size: 1.2rem; }
+        table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; }
+        table.ranking-table th { background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green); }
+        .rank-1 { background-color: rgba(57, 255, 20, 0.1); font-weight: bold; }
         .score-win { color: var(--neon-pink); font-weight: bold; }
         .score-loss { color: var(--neon-blue); }
 
-        /* --- マトリクス --- */
-        table.matrix-table { width: 100%; min-width: 400px; border-collapse: collapse; margin-top: 10px; }
-        table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 12px; text-align: center; font-size: 1.1rem; }
+        /* マトリクス */
+        .matrix-scroll { overflow-x: auto; }
+        table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
+        table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 10px; text-align: center; font-size: 1rem; }
         table.matrix-table th { background: #000; color: var(--neon-green); }
         .diagonal-cell { background: #111; }
 
-        /* --- グラフエリア --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .stats-card { background: #000; padding: 20px; border-radius: 8px; border: 1px solid #333; }
-        .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; font-size: 1.3rem; }
+        /* グラフエリア */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; }
         
-        .charts-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .charts-container {
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+        }
         .chart-wrapper {
             flex: 1; min-width: 140px; max-width: 220px; text-align: center;
-            background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333;
+            background: #111; padding: 10px; border-radius: 8px; border: 1px solid #333;
         }
-        .chart-title { font-size: 1rem; margin-bottom: 5px; color: #ccc; }
-        .chart-score { font-size: 1.1rem; margin-top: 5px; font-weight: bold; }
+        .chart-title { font-size: 0.9rem; margin-bottom: 5px; color: #ccc; }
+        .chart-score { font-size: 1rem; margin-top: 5px; font-weight: bold; }
 
-        /* --- 履歴・設定 --- */
-        .history-list { max-height: 250px; overflow-y: auto; background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; font-size: 1rem; }
+        /* 履歴・下部 */
+        .history-list { max-height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+        .history-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; }
         
-        .bottom-controls { margin-top: 60px; padding-top: 30px; border-top: 1px dashed #444; }
-        .control-panel { display: flex; gap: 15px; margin-bottom: 25px; justify-content: center; flex-wrap: wrap; }
-        .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        input[type="text"] { padding: 12px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit; font-size: 1rem; }
+        .bottom-controls { margin-top: 50px; padding-top: 20px; border-top: 1px dashed #444; }
+        .control-panel { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+        input[type="text"] { padding: 10px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit; }
         
-        /* --- ボタン類 --- */
         button { font-family: inherit; }
-        /* 共通スタイル */
-        button.action-btn, button.delete-btn, button.excel-btn, button.create-excel-btn, button.reset-btn {
-            padding: 12px 24px; cursor: pointer; border-radius: 8px; font-weight: bold; font-size: 1rem; transition: 0.2s;
-        }
-        
-        button.action-btn { background: #000; color: var(--neon-green); border: 2px solid var(--neon-green); }
+        button.action-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; color: var(--neon-green); border: 1px solid var(--neon-green); }
         button.action-btn:hover { background: var(--neon-green); color: #000; }
+        button.delete-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; color: var(--danger-color); border: 1px solid var(--danger-color); }
+        button.delete-btn:hover { background: var(--danger-color); color: #fff; }
+        .delete-history-btn { background: #333; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+        /* Excelボタン */
+        button.excel-btn {
+            background: #000; color: var(--excel-color); border: 2px solid var(--excel-color);
+            padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+        button.excel-btn:hover { background: var(--excel-color); color: #fff; }
         
-        button.delete-btn { background: #000
+        /* 初期データExcel生成ボタン */
+        button.create-excel-btn {
+            background: #000; color: #ffd700; border: 2px solid #ffd700;
+            padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold;
+            margin-top: 10px; display: flex; align-items: center; gap: 8px; justify-content: center;
+        }
+        button.create-excel-btn:hover { background: #ffd700; color: #000; }
+
+        /* スマホ対応 */
+        @media (max-width: 600px) {
+            .header-container { flex-direction: column; text-align: center; gap: 10px; }
+            .header-left { flex-direction: column; }
+            .input-area { flex-direction: column; gap: 5px; }
+            .input-group { width: 100%; }
+            .control-panel button { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <p>LOADING...</p>
+        <p style="font-size:0.8rem; margin-top:10px;">データを読み込んでいます</p>
+    </div>
+
+    <header class="header-container">
+        <div class="header-left">
+            <div class="shogi-icon">
+                <svg viewBox="0 0 100 120">
+                    <path d="M50 5 L95 25 L85 115 L15 115 L5 25 Z" stroke-linejoin="round" />
+                    <text x="50" y="80" font-size="50" text-anchor="middle" fill="#39ff14" stroke="none" style="font-family: 'M PLUS Rounded 1c'; font-weight:800;">王</text>
+                </svg>
+            </div>
+            <div class="title-group">
+                <h1>将棋 通算勝敗表</h1>
+                <div class="subtitle">SHOGI BATTLE LOG (Excel版)</div>
+            </div>
+        </div>
+        <div class="last-updated" id="lastUpdatedDisplay">Last Updated: ----/--/-- --:--</div>
+    </header>
+
+    <div class="card">
+        <h2>対局結果の登録</h2>
+        <div id="streakBanner" class="streak-banner"></div>
+        <div class="input-area">
+            <div class="input-group">
+                <label style="color:var(--neon-pink); font-weight:bold; margin-bottom:5px;">Winner (勝者)</label>
+                <select id="winnerSelect" class="player-select"></select>
+            </div>
+            <div class="vs-label">vs</div>
+            <div class="input-group">
+                <label style="color:var(--neon-blue); font-weight:bold; margin-bottom:5px;">Loser (敗者)</label>
+                <select id="loserSelect" class="player-select"></select>
+            </div>
+        </div>
+        <button class="register-btn" onclick="registerMatch()">結果を記録する</button>
+    </div>
+
+    <div class="card">
+        <h2>順位表（勝率順）</h2>
+        <div class="table-responsive">
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th width="10%">順位</th>
+                        <th width="35%">氏名</th>
+                        <th width="20%">勝 - 負</th>
+                        <th width="15%">勝率</th>
+                        <th>試合数</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>対戦スコア表 (勝ち - 負け)</h2>
+        <div class="matrix-scroll">
+            <table class="matrix-table">
+                <thead id="matrixHead"></thead>
+                <tbody id="matrixBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>個人成績分析（対戦相手別勝率）</h2>
+        <div id="statsList" class="stats-grid"></div>
+    </div>
+
+    <div class="card">
+        <h2>直近の対局履歴</h2>
+        <div id="historyList" class="history-list"></div>
+    </div>
+
+    <div class="bottom-controls">
+        <div class="card">
+            <h2>参加者管理</h2>
+            <div id="playerList" style="margin-bottom:20px;"></div>
+            <div class="control-panel">
+                <button class="action-btn" onclick="addPlayer()">＋ 参加者を追加</button>
+                <button class="delete-btn" onclick="removePlayer()">－ 人数を減らす</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Excelファイルでデータ管理</h2>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
+                ※サイトを閉じる前に「Excel保存」を推奨します。<br>
+                ※「Excel読込」で保存したデータを復元できます。
+            </p>
+            <div class="control-panel">
+                <button class="excel-btn" onclick="exportExcel()">
+                    <span>📥 Excel保存 (ダウンロード)</span>
+                </button>
+                <button class="excel-btn" onclick="document.getElementById('excelInput').click()">
+                    <span>📤 Excel読込 (ロード)</span>
+                </button>
+                <input type="file" id="excelInput" style="display:none" accept=".xlsx, .xls" onchange="importExcel(this)">
+            </div>
+            
+            <div style="text-align:center; margin-top:20px; border-top:1px dashed #333; padding-top:10px;">
+                <p style="color:#ffd700; font-size:0.8rem; margin-bottom:5px;">初期データ（吉谷・石井山・森岡）のExcelファイルを作成します</p>
+                <button class="create-excel-btn" onclick="downloadInitialExcel()">
+                    🛠️ 初期データ入りExcelを作成・保存
+                </button>
+            </div>
+        </div>
+        
+        <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:5px;" id="saveStatus"></div>
+    </div>
+
+    <script>
+        let players = [];
+        let matches = []; 
+        let lastUpdated = ""; 
+        let chartInstances = [];
+        // 新しいストレージキーで強制リセット
+        const STORAGE_KEY = 'shogiInfiniteV13_Stable';
+
+        // ページ読み込み完了後に初期化（画面真っ暗防止）
+        window.addEventListener('DOMContentLoaded', () => {
+            // 少し待ってから実行（スタイル適用待ち）
+            setTimeout(() => {
+                init();
+                // 読み込み完了したらローディング画面を消す
+                const loader = document.getElementById('loading-screen');
+                if(loader) loader.style.display = 'none';
+            }, 500);
+        });
+
+        function init() {
+            // まずLocalStorageをチェック
+            const json = localStorage.getItem(STORAGE_KEY);
+            if (json) {
+                try {
+                    const d = JSON.parse(json);
+                    if (d.players && d.players.length > 0) players = d.players;
+                    if (d.matches) matches = d.matches;
+                    if (d.lastUpdated) lastUpdated = d.lastUpdated;
+                } catch(e) { console.error(e); }
+            }
+            
+            // データが空なら「初期データ」をロード
+            if (players.length === 0) {
+                loadPresetData();
+            }
+            
+            renderAll();
+        }
+
+        // 初期データ（吉谷・石井山・森岡）
+        function loadPresetData() {
+            players = [
+                { id: 0, name: '吉谷 悠' },
+                { id: 1, name: '石井山 拓登' },
+                { id: 2, name: '森岡 凜太郎' }
+            ];
+            matches = [];
+            // 吉谷 6-6 石井山
+            for(let i=0; i<6; i++) {
+                matches.push({ winner: 0, loser: 1, timestamp: Date.now() });
+                matches.push({ winner: 1, loser: 0, timestamp: Date.now() });
+            }
+            // 吉谷 6-6 森岡
+            for(let i=0; i<6; i++) {
+                matches.push({ winner: 0, loser: 2, timestamp: Date.now() });
+                matches.push({ winner: 2, loser: 0, timestamp: Date.now() });
+            }
+            // 石井山 4-4 森岡
+            for(let i=0; i<4; i++) {
+                matches.push({ winner: 1, loser: 2, timestamp: Date.now() });
+                matches.push({ winner: 2, loser: 1, timestamp: Date.now() });
+            }
+        }
+
+        // ★ 初期データ入りExcelのダウンロード（新規作成） ★
+        function downloadInitialExcel() {
+            // 一時的に初期データを生成
+            const initPlayers = [
+                { id: 0, name: '吉谷 悠' },
+                { id: 1, name: '石井山 拓登' },
+                { id: 2, name: '森岡 凜太郎' }
+            ];
+            const initMatches = [];
+            for(let i=0; i<6; i++) {
+                initMatches.push({ winner: 0, loser: 1, timestamp: Date.now() });
+                initMatches.push({ winner: 1, loser: 0, timestamp: Date.now() });
+            }
+            for(let i=0; i<6; i++) {
+                initMatches.push({ winner: 0, loser: 2, timestamp: Date.now() });
+                initMatches.push({ winner: 2, loser: 0, timestamp: Date.now() });
+            }
+            for(let i=0; i<4; i++) {
+                initMatches.push({ winner: 1, loser: 2, timestamp: Date.now() });
+                initMatches.push({ winner: 2, loser: 1, timestamp: Date.now() });
+            }
+
+            if (typeof XLSX === 'undefined') {
+                alert("Excel機能の読み込み中です。");
+                return;
+            }
+
+            const matchData = initMatches.map(m => {
+                const wName = initPlayers.find(p => p.id === m.winner)?.name || "不明";
+                const lName = initPlayers.find(p => p.id === m.loser)?.name || "不明";
+                return { "対戦日": new Date(m.timestamp).toLocaleString(), "勝者": wName, "敗者": lName };
+            });
+            const playerData = initPlayers.map(p => ({ "ID": p.id, "名前": p.name }));
+
+            const wb = XLSX.utils.book_new();
+            const wsMatches = XLSX.utils.json_to_sheet(matchData);
+            wsMatches['!cols'] = [{wch:25}, {wch:15}, {wch:15}];
+            XLSX.utils.book_append_sheet(wb, wsMatches, "対戦履歴");
+            const wsPlayers = XLSX.utils.json_to_sheet(playerData);
+            XLSX.utils.book_append_sheet(wb, wsPlayers, "参加者リスト");
+
+            XLSX.writeFile(wb, `将棋_初期データセット.xlsx`);
+        }
+
+        // --- Excel書き出し (Export) ---
+        function exportExcel() {
+            if (typeof XLSX === 'undefined') { alert("Excel機能準備中..."); return; }
+            const matchData = matches.map(m => {
+                const wName = players.find(p => p.id === m.winner)?.name || "不明";
+                const lName = players.find(p => p.id === m.loser)?.name || "不明";
+                return { "対戦日": new Date(m.timestamp).toLocaleString(), "勝者": wName, "敗者": lName };
+            });
+            const playerData = players.map(p => ({ "ID": p.id, "名前": p.name }));
+
+            const wb = XLSX.utils.book_new();
+            const wsMatches = XLSX.utils.json_to_sheet(matchData);
+            wsMatches['!cols'] = [{wch:25}, {wch:15}, {wch:15}];
+            XLSX.utils.book_append_sheet(wb, wsMatches, "対戦履歴");
+            const wsPlayers = XLSX.utils.json_to_sheet(playerData);
+            XLSX.utils.book_append_sheet(wb, wsPlayers, "参加者リスト");
+
+            const dateStr = new Date().toISOString().slice(0,10);
+            XLSX.writeFile(wb, `将棋勝敗表_${dateStr}.xlsx`);
+        }
+
+        // --- Excel読み込み (Import) ---
+        function importExcel(input) {
+            const file = input.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const sheetMatches = wb.Sheets["対戦履歴"];
+                    const sheetPlayers = wb.Sheets["参加者リスト"];
+
+                    if(!sheetMatches || !sheetPlayers) {
+                        alert("エラー: 必要なシートが見つかりません。");
+                        return;
+                    }
+
+                    const jsonPlayers = XLSX.utils.sheet_to_json(sheetPlayers);
+                    const jsonMatches = XLSX.utils.sheet_to_json(sheetMatches);
+
+                    if(confirm("Excelデータを読み込んで、現在のデータを上書きしますか？")) {
+                        players = jsonPlayers.map(row => ({
+                            id: row["ID"],
+                            name: row["名前"]
+                        }));
+
+                        matches = [];
+                        jsonMatches.forEach(row => {
+                            const wName = row["勝者"];
+                            const lName = row["敗者"];
+                            const wObj = players.find(p => p.name === wName);
+                            const lObj = players.find(p => p.name === lName);
+                            if(wObj && lObj) {
+                                matches.push({
+                                    winner: wObj.id,
+                                    loser: lObj.id,
+                                    timestamp: row["対戦日"] ? new Date(row["対戦日"]).getTime() : Date.now()
+                                });
+                            }
+                        });
+
+                        const now = new Date();
+                        lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+                        saveData();
+                        renderAll();
+                        alert("読み込み完了！");
+                    }
+
+                } catch(err) {
+                    console.error(err);
+                    alert("読み込みに失敗しました。");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            input.value = '';
+        }
+
+        // --- メインロジック ---
+        function renderAll() {
+            try {
+                updateSelectOptions();
+                renderPlayerInputs();
+                calculateAndRender();
+                renderHistory();
+                renderLastUpdated(); 
+                saveData();
+            } catch(e) { console.error("Rendering Error:", e); }
+        }
+
+        function updateSelectOptions() {
+            const wSelect = document.getElementById('winnerSelect');
+            const lSelect = document.getElementById('loserSelect');
+            if(!wSelect || !lSelect) return;
+            const wVal = wSelect.value;
+            const lVal = lSelect.value;
+            wSelect.innerHTML = ''; lSelect.innerHTML = '';
+            players.forEach(p => {
+                const optW = document.createElement('option'); optW.value = p.id; optW.text = p.name; wSelect.appendChild(optW);
+                const optL = document.createElement('option'); optL.value = p.id; optL.text = p.name; lSelect.appendChild(optL);
+            });
+            if(wVal) wSelect.value = wVal;
+            if(lVal) lSelect.value = lVal;
+            if (players.length > 1 && lSelect.value === wSelect.value) {
+                lSelect.selectedIndex = (wSelect.selectedIndex + 1) % players.length;
+            }
+        }
+
+        function registerMatch() {
+            const wId = parseInt(document.getElementById('winnerSelect').value);
+            const lId = parseInt(document.getElementById('loserSelect').value);
+            if (wId === lId) { alert("勝者と敗者が同じです"); return; }
+            matches.push({ winner: wId, loser: lId, timestamp: Date.now() });
+            const now = new Date();
+            lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            renderAll();
+        }
+
+        function calculateAndRender() {
+            let stats = players.map(p => ({
+                id: p.id, name: p.name, wins: 0, losses: 0, total: 0, vs: Array(players.length).fill(0), currentStreak: 0
+            }));
+
+            matches.forEach(m => {
+                if (!stats[m.winner] || !stats[m.loser]) return;
+                stats[m.winner].wins++; stats[m.winner].total++; stats[m.winner].vs[m.loser]++; 
+                stats[m.loser].losses++; stats[m.loser].total++;
+
+                if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; else stats[m.winner].currentStreak++;
+                if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; else stats[m.loser].currentStreak--;
+            });
+
+            // Banner
+            const banner = document.getElementById('streakBanner');
+            let topStreak = 0; let topStreakerName = "";
+            stats.forEach(s => {
+                if (s.currentStreak >= 3 && s.currentStreak > topStreak) { topStreak = s.currentStreak; topStreakerName = s.name; }
+            });
+            if (banner) {
+                if (topStreak > 0) {
+                    banner.style.display = "block";
+                    banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
+                } else { banner.style.display = "none"; }
+            }
+
+            // Ranking
+            let ranking = [...stats].sort((a, b) => {
+                const rateA = a.total ? a.wins / a.total : 0; const rateB = b.total ? b.wins / b.total : 0;
+                if (rateB !== rateA) return rateB - rateA; return b.wins - a.wins;
+            });
+
+            const rBody = document.getElementById('rankingBody');
+            if(rBody) {
+                rBody.innerHTML = '';
+                ranking.forEach((s, i) => {
+                    const tr = document.createElement('tr');
+                    let nameHtml = s.name; let badges = "";
+                    if (i === 0 && s.total > 0) { tr.classList.add('rank-1'); badges += `<span class="badge badge-crown">👑</span>`; }
+                    if (s.currentStreak >= 3) badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
+                    if (s.currentStreak <= -3) badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
+                    if (badges) nameHtml += `<br>${badges}`;
+                    const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
+                    tr.innerHTML = `<td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td><td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td><td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td><td>${rate}%</td><td>${s.total}</td>`;
+                    rBody.appendChild(tr);
+                });
+            }
+
+            // Matrix
+            const mHead = document.getElementById('matrixHead'); const mBody = document.getElementById('matrixBody');
+            if(mHead && mBody) {
+                let hHtml = '<tr><th></th>'; players.forEach(p => hHtml += `<th>${p.name}</th>`); hHtml += '</tr>'; mHead.innerHTML = hHtml;
+                mBody.innerHTML = '';
+                stats.forEach((rowP, i) => {
+                   const tr = document.createElement('tr'); let rowHtml = `<th>${rowP.name}</th>`;
+                   players.forEach((colP, j) => {
+                       if (i === j) rowHtml += '<td class="diagonal-cell"></td>';
+                       else {
+                           const wins = stats[i].vs[j]; const losses = stats[j].vs[i];
+                           let content = '-'; if (wins > 0 || losses > 0) content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
+                           rowHtml += `<td class="score-cell">${content}</td>`;
+                       }
+                   });
+                   tr.innerHTML = rowHtml; mBody.appendChild(tr);
+                });
+            }
+            
+            renderCharts(stats);
+        }
+
+        function renderCharts(statsData) {
+            const
