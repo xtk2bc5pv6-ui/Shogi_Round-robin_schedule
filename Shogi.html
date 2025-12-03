@@ -31,7 +31,7 @@
             padding-bottom: 150px;
         }
 
-        /* --- ヘッダーエリア --- */
+        /* --- ヘッダー --- */
         .header-container {
             display: flex;
             align-items: center;
@@ -41,94 +41,45 @@
             border-bottom: 2px solid var(--neon-green);
             position: relative;
         }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        /* ネオン将棋アイコン */
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
-            width: 60px;
-            height: 60px;
-            fill: none;
-            stroke: var(--neon-green);
-            stroke-width: 3;
+            width: 60px; height: 60px; fill: none; stroke: var(--neon-green); stroke-width: 3;
             filter: drop-shadow(0 0 5px var(--neon-green));
         }
-        .title-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .title-group { display: flex; flex-direction: column; }
         h1 {
-            font-size: 2.2rem;
-            margin: 0;
-            line-height: 1.2;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green);
-            font-weight: 800;
-            letter-spacing: 2px;
+            font-size: 2.2rem; margin: 0; line-height: 1.2; color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green); font-weight: 800; letter-spacing: 2px;
         }
         .subtitle {
-            font-size: 1rem;
-            color: var(--neon-blue);
-            letter-spacing: 3px;
-            font-weight: 700;
+            font-size: 1rem; color: var(--neon-blue); letter-spacing: 3px; font-weight: 700;
             text-shadow: 0 0 5px var(--neon-blue);
         }
-        .last-updated {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: right;
-            align-self: flex-end;
-        }
+        .last-updated { font-size: 0.8rem; color: #888; text-align: right; align-self: flex-end; }
 
-        /* --- カードスタイル --- */
+        /* --- カード --- */
         .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
+            background: var(--card-bg); padding: 20px; border-radius: 12px;
             border: 1px solid var(--neon-green);
             box-shadow: 0 0 15px rgba(57, 255, 20, 0.1), inset 0 0 10px rgba(57, 255, 20, 0.05);
-            margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 25px; position: relative; overflow: hidden;
         }
-        /* カード背景にうっすらグリッド */
         .card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.1;
-            z-index: 0;
-            pointer-events: none;
+            background-size: 20px 20px; opacity: 0.1; z-index: 0; pointer-events: none;
         }
         .card-content { position: relative; z-index: 1; }
-
         h2 {
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--neon-green);
-            padding-bottom: 10px;
-            margin-top: 0;
-            color: var(--neon-blue);
-            text-shadow: 0 0 5px var(--neon-blue);
-            font-weight: 700;
+            font-size: 1.3rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
+            color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); font-weight: 700;
         }
 
         /* --- 連勝バナー --- */
         .streak-banner {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px dashed var(--neon-pink);
-            color: var(--neon-pink);
-            padding: 10px;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            display: none; /* JSで表示制御 */
-            text-shadow: 0 0 5px var(--neon-pink);
-            animation: pulse 2s infinite;
+            background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
+            padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
+            display: none; text-shadow: 0 0 5px var(--neon-pink); animation: pulse 2s infinite;
         }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4); }
@@ -138,692 +89,77 @@
 
         /* 入力エリア */
         .input-area {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.5);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #444;
+            display: flex; gap: 15px; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid #444;
         }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            width: 45%;
-        }
-        .vs-label {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #666;
-            margin-top: 20px;
-        }
+        .input-group { display: flex; flex-direction: column; width: 45%; }
+        .vs-label { font-size: 1.5rem; font-weight: 800; color: #666; margin-top: 20px; }
         select.player-select {
-            width: 100%;
-            padding: 12px;
-            background: #222;
-            color: #fff;
-            border: 1px solid var(--neon-green);
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-family: inherit;
-            cursor: pointer;
+            width: 100%; padding: 12px; background: #222; color: #fff;
+            border: 1px solid var(--neon-green); border-radius: 8px; font-size: 1.1rem;
+            font-family: inherit; cursor: pointer;
         }
         button.register-btn {
-            width: 100%;
-            margin-top: 15px;
-            padding: 15px;
-            background: var(--neon-green);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--neon-green);
-            font-family: inherit;
-            transition: 0.2s;
+            width: 100%; margin-top: 15px; padding: 15px; background: var(--neon-green);
+            color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 0 0 15px var(--neon-green); font-family: inherit; transition: 0.2s;
         }
-        button.register-btn:hover {
-            background: #fff;
-            box-shadow: 0 0 25px var(--neon-green);
-            transform: scale(1.02);
-        }
+        button.register-btn:hover { background: #fff; box-shadow: 0 0 25px var(--neon-green); transform: scale(1.02); }
 
         /* --- 順位表 & バッジ --- */
         table.ranking-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 10px;
-            border: 1px solid var(--neon-green);
-            border-radius: 8px;
-            overflow: hidden;
+            width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
+            border: 1px solid var(--neon-green); border-radius: 8px; overflow: hidden;
         }
-        table.ranking-table th, table.ranking-table td {
-            padding: 12px 8px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-        }
+        table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; }
         table.ranking-table th {
-            background-color: #000;
-            color: var(--neon-blue);
-            font-weight: 700;
-            border-bottom: 1px solid var(--neon-green);
+            background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green);
         }
-        .rank-1 { 
-            background-color: rgba(57, 255, 20, 0.1); 
-            box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.2);
-            font-weight: bold;
-        }
-        /* バッジ */
-        .badge {
-            display: inline-block;
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
+        .rank-1 { background-color: rgba(57, 255, 20, 0.1); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.2); font-weight: bold; }
+        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
         .badge-crown { font-size: 1.2rem; margin-right: 5px; filter: drop-shadow(0 0 3px gold); }
-        .badge-fire { 
-            border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); 
-            box-shadow: 0 0 5px #ff5722;
-        }
-        .badge-rain { 
-            border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); 
-        }
+        .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); box-shadow: 0 0 5px #ff5722; }
+        .badge-rain { border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); }
 
         /* マトリクス */
         .matrix-scroll { overflow-x: auto; }
-        table.matrix-table {
-            width: 100%;
-            min-width: 300px;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+        table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
         table.matrix-table th, table.matrix-table td {
-            border: 1px solid #444;
-            padding: 10px;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 1rem;
+            border: 1px solid #444; padding: 10px; text-align: center; vertical-align: middle; font-size: 1rem;
         }
         table.matrix-table th { background: #000; color: var(--neon-green); }
         .score-win { color: var(--neon-pink); font-weight: bold; }
         .score-loss { color: var(--neon-blue); }
         .diagonal-cell {
-            background: #111;
-            background-image: linear-gradient(45deg, #111 25%, #000 25%, #000 50%, #111 50%, #111 75%, #000 75%, #000 100%);
+            background: #111; background-image: linear-gradient(45deg, #111 25%, #000 25%, #000 50%, #111 50%, #111 75%, #000 75%, #000 100%);
             background-size: 10px 10px;
         }
 
-        /* グラフエリア */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .stats-card {
-            background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-        }
+        /* グラフ・履歴・下部 */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
         .stats-header {
-            font-size: 1.1rem;
-            color: var(--text-color);
-            margin-bottom: 10px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+            font-size: 1.1rem; color: var(--text-color); margin-bottom: 10px; text-align: center;
+            border-bottom: 1px solid #333; padding-bottom: 5px;
         }
 
-        /* 履歴・下部 */
-        .history-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            background: #000;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid #222;
-        }
+        .history-list { max-height: 200px; overflow-y: auto; border: 1px solid #333; background: #000; padding: 10px; border-radius: 8px; }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #222; }
         .delete-history-btn {
-            background: #333;
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
+            background: #333; color: var(--danger-color); border: 1px solid var(--danger-color);
+            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-family: inherit;
         }
         .delete-history-btn:hover { background: var(--danger-color); color: #fff; }
 
-        .bottom-controls {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px dashed #444;
-        }
+        .bottom-controls { margin-top: 50px; padding-top: 20px; border-top: 1px dashed #444; }
         .control-panel { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
         .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-        input[type="text"] {
-            padding: 10px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit;
-        }
+        input[type="text"] { padding: 10px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit; }
+        
         button { font-family: inherit; }
-        button.action-btn, button.delete-btn {
-            padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000;
-        }
+        button.action-btn, button.delete-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; }
         button.action-btn { color: var(--neon-green); border: 1px solid var(--neon-green); }
         button.action-btn:hover { background: var(--neon-green); color: #000; }
         button.delete-btn { color: var(--danger-color); border: 1px solid var(--danger-color); }
         button.delete-btn:hover { background: var(--danger-color); color: #fff; }
-        button.reset-btn {
-            display: block; width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #666; padding: 10px; cursor: pointer; border-radius: 6px;
-        }
-        button.reset-btn:hover { background: #333; color: #fff; }
-
-        /* レスポンシブ対応 */
-        @media (max-width: 600px) {
-            .header-container { flex-direction: column; text-align: center; gap: 10px; }
-            .header-left { flex-direction: column; }
-            .last-updated { align-self: center; margin-top: 10px; }
-            h1 { font-size: 1.8rem; }
-            .input-area { flex-direction: column; gap: 5px; }
-            .input-group { width: 100%; }
-            .vs-label { margin: 5px 0; font-size: 1.2rem; }
-        }
-    </style>
-</head>
-<body>
-
-    <header class="header-container">
-        <div class="header-left">
-            <div class="shogi-icon">
-                <svg viewBox="0 0 100 120">
-                    <path d="M50 5 L95 25 L85 115 L15 115 L5 25 Z" stroke-linejoin="round" />
-                    <text x="50" y="80" font-size="50" text-anchor="middle" fill="#39ff14" stroke="none" style="font-family: 'M PLUS Rounded 1c'; font-weight:800;">王</text>
-                </svg>
-            </div>
-            <div class="title-group">
-                <h1>将棋 通算勝敗表</h1>
-                <div class="subtitle">SHOGI BATTLE LOG</div>
-            </div>
-        </div>
-        <div class="last-updated" id="lastUpdatedDisplay">Last Updated: ----/--/-- --:--</div>
-    </header>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>対局結果の登録</h2>
-            
-            <div id="streakBanner" class="streak-banner"></div>
-
-            <div class="input-area">
-                <div class="input-group">
-                    <label style="color:var(--neon-pink); font-weight:bold; margin-bottom:5px;">Winner (勝者)</label>
-                    <select id="winnerSelect" class="player-select"></select>
-                </div>
-                <div class="vs-label">vs</div>
-                <div class="input-group">
-                    <label style="color:var(--neon-blue); font-weight:bold; margin-bottom:5px;">Loser (敗者)</label>
-                    <select id="loserSelect" class="player-select"></select>
-                </div>
-            </div>
-            <button class="register-btn" onclick="registerMatch()">結果を記録する</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>順位表（勝率順）</h2>
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th width="10%">順位</th>
-                        <th width="35%">氏名</th>
-                        <th width="20%">勝 - 負</th>
-                        <th width="15%">勝率</th>
-                        <th>試合数</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>対戦スコア表 (勝ち - 負け)</h2>
-            <div class="matrix-scroll">
-                <table class="matrix-table">
-                    <thead id="matrixHead"></thead>
-                    <tbody id="matrixBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>個人成績分析</h2>
-            <div id="statsList" class="stats-grid"></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>直近の対局履歴</h2>
-            <div id="historyList" class="history-list"></div>
-        </div>
-    </div>
-
-    <div class="bottom-controls">
-        <div class="card">
-            <div class="card-content">
-                <h2>参加者管理</h2>
-                <div id="playerList" style="margin-bottom:20px;"></div>
-                
-                <div class="control-panel">
-                    <button class="action-btn" onclick="addPlayer()">＋ 参加者を追加</button>
-                    <button class="delete-btn" onclick="removePlayer()">－ 人数を減らす</button>
-                </div>
-                
-                <button class="reset-btn" onclick="resetData()">全データをリセット</button>
-                <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:5px;" id="saveStatus"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let players = [];
-        let matches = []; 
-        let lastUpdated = ""; // 最終更新日時
-        let chartInstances = [];
-
-        function init() {
-            loadData();
-            if (players.length === 0) {
-                players = [
-                    { id: 0, name: 'Aさん' },
-                    { id: 1, name: 'Bさん' },
-                    { id: 2, name: 'Cさん' }
-                ];
-            }
-            renderAll();
-        }
-
-        function renderAll() {
-            updateSelectOptions();
-            renderPlayerInputs();
-            calculateAndRender();
-            renderHistory();
-            renderLastUpdated(); // 更新日時の表示
-            saveData();
-        }
-
-        // --- 状態管理 ---
-        function updateSelectOptions() {
-            const wSelect = document.getElementById('winnerSelect');
-            const lSelect = document.getElementById('loserSelect');
-            const wVal = wSelect.value;
-            const lVal = lSelect.value;
-
-            wSelect.innerHTML = '';
-            lSelect.innerHTML = '';
-
-            players.forEach(p => {
-                const optW = document.createElement('option');
-                optW.value = p.id;
-                optW.text = p.name;
-                wSelect.appendChild(optW);
-
-                const optL = document.createElement('option');
-                optL.value = p.id;
-                optL.text = p.name;
-                lSelect.appendChild(optL);
-            });
-
-            if(wVal !== "") wSelect.value = wVal;
-            if(lVal !== "") lSelect.value = lVal;
-            
-            if (lSelect.value === wSelect.value && players.length > 1) {
-                lSelect.selectedIndex = (wSelect.selectedIndex + 1) % players.length;
-            }
-        }
-
-        function registerMatch() {
-            const wId = parseInt(document.getElementById('winnerSelect').value);
-            const lId = parseInt(document.getElementById('loserSelect').value);
-
-            if (wId === lId) {
-                alert("勝者と敗者が同じです");
-                return;
-            }
-
-            matches.push({
-                winner: wId,
-                loser: lId,
-                timestamp: Date.now()
-            });
-
-            // 更新日時を現在にセット
-            const now = new Date();
-            lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-
-            renderAll();
-        }
-
-        // --- 集計と表示ロジック（連勝計算含む） ---
-        function calculateAndRender() {
-            // 集計用データ初期化
-            let stats = players.map(p => ({
-                id: p.id,
-                name: p.name,
-                wins: 0,
-                losses: 0,
-                total: 0,
-                vs: Array(players.length).fill(0),
-                currentStreak: 0 // 連勝数 (負けはマイナス)
-            }));
-
-            // 全履歴を走査して集計 & 連勝計算
-            matches.forEach(m => {
-                if (!stats[m.winner] || !stats[m.loser]) return;
-
-                // 基本スコア
-                stats[m.winner].wins++;
-                stats[m.winner].total++;
-                stats[m.winner].vs[m.loser]++; 
-
-                stats[m.loser].losses++;
-                stats[m.loser].total++;
-
-                // 連勝計算ロジック
-                // 勝者
-                if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; // 負け越しから復帰
-                else stats[m.winner].currentStreak++; // 連勝加算
-
-                // 敗者
-                if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; // 連勝ストップ
-                else stats[m.loser].currentStreak--; // 連敗加算
-            });
-
-            // ★実況バナーの表示★
-            const banner = document.getElementById('streakBanner');
-            // 最も連勝している人を探す
-            let topStreak = 0;
-            let topStreakerName = "";
-            stats.forEach(s => {
-                if (s.currentStreak >= 3 && s.currentStreak > topStreak) {
-                    topStreak = s.currentStreak;
-                    topStreakerName = s.name;
-                }
-            });
-
-            if (topStreak > 0) {
-                banner.style.display = "block";
-                banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
-            } else {
-                banner.style.display = "none";
-            }
-
-            // 1. ランキング表示
-            let ranking = [...stats].sort((a, b) => {
-                const rateA = a.total ? a.wins / a.total : 0;
-                const rateB = b.total ? b.wins / b.total : 0;
-                if (rateB !== rateA) return rateB - rateA;
-                return b.wins - a.wins;
-            });
-
-            const rBody = document.getElementById('rankingBody');
-            rBody.innerHTML = '';
-            ranking.forEach((s, i) => {
-                const tr = document.createElement('tr');
-                let nameHtml = s.name;
-                let badges = "";
-
-                // 👑 1位バッジ
-                if (i === 0 && s.total > 0) {
-                    tr.classList.add('rank-1');
-                    badges += `<span class="badge badge-crown">👑</span>`;
-                }
-
-                // 🔥 連勝バッジ
-                if (s.currentStreak >= 3) {
-                    badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
-                }
-                // ☔ 連敗バッジ
-                if (s.currentStreak <= -3) {
-                    badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
-                }
-
-                if (badges) nameHtml += `<br>${badges}`;
-
-                const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
-                
-                tr.innerHTML = `
-                    <td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td>
-                    <td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td>
-                    <td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td>
-                    <td>${rate}%</td>
-                    <td>${s.total}</td>
-                `;
-                rBody.appendChild(tr);
-            });
-
-            // 2. マトリクス
-            const mHead = document.getElementById('matrixHead');
-            const mBody = document.getElementById('matrixBody');
-            let hHtml = '<tr><th></th>';
-            players.forEach(p => hHtml += `<th>${p.name}</th>`);
-            hHtml += '</tr>';
-            mHead.innerHTML = hHtml;
-            mBody.innerHTML = '';
-            stats.forEach((rowP, i) => {
-               const tr = document.createElement('tr');
-               let rowHtml = `<th>${rowP.name}</th>`;
-               players.forEach((colP, j) => {
-                   if (i === j) {
-                       rowHtml += '<td class="diagonal-cell"></td>';
-                   } else {
-                       const wins = stats[i].vs[j];
-                       const losses = stats[j].vs[i];
-                       let content = '-';
-                       if (wins > 0 || losses > 0) {
-                           content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
-                       }
-                       rowHtml += `<td class="score-cell">${content}</td>`;
-                   }
-               });
-               tr.innerHTML = rowHtml;
-               mBody.appendChild(tr);
-            });
-
-            // 3. グラフ
-            renderCharts(stats);
-        }
-
-        function renderCharts(statsData) {
-            const container = document.getElementById('statsList');
-            chartInstances.forEach(c => c.destroy());
-            chartInstances = [];
-            container.innerHTML = '';
-
-            statsData.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'stats-card';
-                const pieId = `pie-${p.id}`;
-                const barId = `bar-${p.id}`;
-
-                card.innerHTML = `
-                    <div class="stats-header">${p.name}</div>
-                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                        <div style="flex:1; min-width:120px;">
-                            <canvas id="${pieId}"></canvas>
-                        </div>
-                        <div style="flex:1; min-width:120px;">
-                            <canvas id="${barId}"></canvas>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-
-                const ctxPie = document.getElementById(pieId).getContext('2d');
-                chartInstances.push(new Chart(ctxPie, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Win', 'Loss'],
-                        datasets: [{
-                            data: [p.wins, p.losses],
-                            backgroundColor: ['#ff00ff', '#00ffff'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: {display: false}, title: {display: true, text: '通算勝率', color: '#888', font: {family: "'M PLUS Rounded 1c'"}} }
-                    }
-                }));
-
-                let labels = [];
-                let data = [];
-                players.forEach((opp, idx) => {
-                    if (opp.id !== p.id) {
-                        labels.push(opp.name);
-                        data.push(p.vs[idx]);
-                    }
-                });
-
-                const ctxBar = document.getElementById(barId).getContext('2d');
-                chartInstances.push(new Chart(ctxBar, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '勝利数',
-                            data: data,
-                            backgroundColor: '#39ff14',
-                            borderColor: '#39ff14',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true, ticks: {stepSize: 1, color: '#888', font: {family: "'M PLUS Rounded 1c'"}}, grid: {color: '#333'} },
-                            x: { ticks: {color: '#888', font: {family: "'M PLUS Rounded 1c'"}}, grid: {display: false} }
-                        },
-                        plugins: { legend: {display: false}, title: {display: true, text: '相手別勝利数', color: '#888', font: {family: "'M PLUS Rounded 1c'"}} }
-                    }
-                }));
-            });
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '';
-            const reversedMatches = [...matches].reverse();
-            reversedMatches.forEach((m, revIndex) => {
-                const originalIndex = matches.length - 1 - revIndex;
-                const winnerName = players[m.winner] ? players[m.winner].name : "不明";
-                const loserName = players[m.loser] ? players[m.loser].name : "不明";
-
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <div class="history-text">
-                        <span style="color:var(--neon-pink)">○ ${winnerName}</span> vs 
-                        <span style="color:var(--neon-blue)">● ${loserName}</span>
-                    </div>
-                    <button class="delete-history-btn" onclick="deleteMatch(${originalIndex})">取消</button>
-                `;
-                list.appendChild(div);
-            });
-            if (matches.length === 0) {
-                list.innerHTML = '<div style="color:#666; text-align:center; padding:10px;">対局履歴なし</div>';
-            }
-        }
-
-        function renderLastUpdated() {
-            const el = document.getElementById('lastUpdatedDisplay');
-            if (lastUpdated) {
-                el.innerText = `Last Updated: ${lastUpdated}`;
-            } else {
-                el.innerText = `Last Updated: ----/--/-- --:--`;
-            }
-        }
-
-        function deleteMatch(index) {
-            if(confirm("この対局記録を取り消しますか？")) {
-                matches.splice(index, 1);
-                // 取り消したら現在時刻で更新するか迷うが、データが変わるので更新する
-                const now = new Date();
-                lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                renderAll();
-            }
-        }
-
-        function renderPlayerInputs() {
-            const container = document.getElementById('playerList');
-            container.innerHTML = '';
-            players.forEach((p, index) => {
-                const div = document.createElement('div');
-                div.className = 'player-input-row';
-                div.innerHTML = `
-                    <span style="color:#666; width:30px;">#${index + 1}</span>
-                    <input type="text" value="${p.name}" oninput="updateName(${index}, this.value)">
-                `;
-                container.appendChild(div);
-            });
-        }
-        function updateName(idx, val) {
-            players[idx].name = val;
-            updateSelectOptions();
-            calculateAndRender();
-            saveData();
-        }
-        function addPlayer() {
-            const newId = players.length;
-            players.push({ id: newId, name: `プレイヤー${newId + 1}` });
-            renderAll();
-        }
-        function removePlayer() {
-            if (players.length <= 2) { alert("最低2名必要です"); return; }
-            if(!confirm("最後の人を削除しますか？\n※その人の対局記録も全て消えます")) return;
-            const removedId = players.length - 1;
-            players.pop();
-            matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId);
-            renderAll();
-        }
-        function saveData() {
-            const data = { players, matches, lastUpdated };
-            localStorage.setItem('shogiInfiniteV3', JSON.stringify(data));
-            document.getElementById('saveStatus').innerText = "自動保存中...";
-        }
-        function loadData() {
-            const json = localStorage.getItem('shogiInfiniteV3');
-            if (json) {
-                const d = JSON.parse(json);
-                if (d.players) players = d.players;
-                if (d.matches) matches = d.matches;
-                if (d.lastUpdated) lastUpdated = d.lastUpdated;
-            }
-        }
-        function resetData() {
-            if(confirm("全てのデータを削除して初期化しますか？")) {
-                localStorage.removeItem('shogiInfiniteV3');
-                location.reload();
-            }
-        }
-
-        init();
-    </script>
-</body>
-</html>
+        button.reset-btn { display: block; width: 100%; margin-top: 10px; background: transparent; color:
