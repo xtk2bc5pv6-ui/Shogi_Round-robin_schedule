@@ -18,7 +18,6 @@
             --neon-pink: #ff00ff;
             --text-color: #e0e0e0;
             --danger-color: #ff3333;
-            --gold-color: #ffd700;
         }
         body {
             font-family: "M PLUS Rounded 1c", sans-serif;
@@ -31,7 +30,7 @@
             padding-bottom: 150px;
         }
 
-        /* --- ヘッダー --- */
+        /* ヘッダー */
         .header-container {
             display: flex;
             align-items: center;
@@ -39,7 +38,6 @@
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid var(--neon-green);
-            position: relative;
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
@@ -57,25 +55,19 @@
         }
         .last-updated { font-size: 0.8rem; color: #888; text-align: right; align-self: flex-end; }
 
-        /* --- カード --- */
+        /* カードデザイン */
         .card {
             background: var(--card-bg); padding: 20px; border-radius: 12px;
             border: 1px solid var(--neon-green);
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1), inset 0 0 10px rgba(57, 255, 20, 0.05);
-            margin-bottom: 25px; position: relative; overflow: hidden;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+            margin-bottom: 25px; position: relative;
         }
-        .card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
-            background-size: 20px 20px; opacity: 0.1; z-index: 0; pointer-events: none;
-        }
-        .card-content { position: relative; z-index: 1; }
         h2 {
             font-size: 1.3rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
             color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); font-weight: 700;
         }
 
-        /* --- 連勝バナー --- */
+        /* 連勝バナー */
         .streak-banner {
             background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
             padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
@@ -83,7 +75,7 @@
         }
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 0, 255, 0); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 0, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0); }
         }
 
@@ -104,72 +96,56 @@
             color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.2rem;
             cursor: pointer; box-shadow: 0 0 15px var(--neon-green); font-family: inherit; transition: 0.2s;
         }
-        button.register-btn:hover { background: #fff; box-shadow: 0 0 25px var(--neon-green); transform: scale(1.02); }
+        button.register-btn:hover { background: #fff; transform: scale(1.02); }
 
-        /* --- 順位表 & バッジ --- */
+        /* テーブル系 */
         table.ranking-table {
             width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
             border: 1px solid var(--neon-green); border-radius: 8px; overflow: hidden;
         }
         table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; }
-        table.ranking-table th {
-            background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green);
-        }
-        .rank-1 { background-color: rgba(57, 255, 20, 0.1); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.2); font-weight: bold; }
-        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
-        .badge-crown { font-size: 1.2rem; margin-right: 5px; filter: drop-shadow(0 0 3px gold); }
-        .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); box-shadow: 0 0 5px #ff5722; }
+        table.ranking-table th { background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green); }
+        .rank-1 { background-color: rgba(57, 255, 20, 0.1); font-weight: bold; }
+        
+        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .badge-crown { font-size: 1.2rem; }
+        .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); }
         .badge-rain { border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); }
 
         /* マトリクス */
         .matrix-scroll { overflow-x: auto; }
         table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
-        table.matrix-table th, table.matrix-table td {
-            border: 1px solid #444; padding: 10px; text-align: center; vertical-align: middle; font-size: 1rem;
-        }
+        table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 10px; text-align: center; font-size: 1rem; }
         table.matrix-table th { background: #000; color: var(--neon-green); }
         .score-win { color: var(--neon-pink); font-weight: bold; }
         .score-loss { color: var(--neon-blue); }
-        .diagonal-cell {
-            background: #111; background-image: linear-gradient(45deg, #111 25%, #000 25%, #000 50%, #111 50%, #111 75%, #000 75%, #000 100%);
-            background-size: 10px 10px;
-        }
+        .diagonal-cell { background: #111; }
 
-        /* グラフ・履歴・下部 */
+        /* その他 */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
-        .stats-header {
-            font-size: 1.1rem; color: var(--text-color); margin-bottom: 10px; text-align: center;
-            border-bottom: 1px solid #333; padding-bottom: 5px;
-        }
-
-        .history-list { max-height: 200px; overflow-y: auto; border: 1px solid #333; background: #000; padding: 10px; border-radius: 8px; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #222; }
-        .delete-history-btn {
-            background: #333; color: var(--danger-color); border: 1px solid var(--danger-color);
-            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-family: inherit;
-        }
-        .delete-history-btn:hover { background: var(--danger-color); color: #fff; }
-
+        .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; }
+        
+        .history-list { max-height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+        .history-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; }
+        
         .bottom-controls { margin-top: 50px; padding-top: 20px; border-top: 1px dashed #444; }
         .control-panel { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
         .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
         input[type="text"] { padding: 10px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit; }
         
         button { font-family: inherit; }
-        button.action-btn, button.delete-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; }
-        button.action-btn { color: var(--neon-green); border: 1px solid var(--neon-green); }
+        button.action-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; color: var(--neon-green); border: 1px solid var(--neon-green); }
         button.action-btn:hover { background: var(--neon-green); color: #000; }
-        button.delete-btn { color: var(--danger-color); border: 1px solid var(--danger-color); }
+        button.delete-btn { padding: 10px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; background: #000; color: var(--danger-color); border: 1px solid var(--danger-color); }
         button.delete-btn:hover { background: var(--danger-color); color: #fff; }
         button.reset-btn { display: block; width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #666; padding: 10px; cursor: pointer; border-radius: 6px; }
         button.reset-btn:hover { background: #333; color: #fff; }
+        .delete-history-btn { background: #333; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
 
         @media (max-width: 600px) {
             .header-container { flex-direction: column; text-align: center; gap: 10px; }
             .header-left { flex-direction: column; }
-            .last-updated { align-self: center; margin-top: 10px; }
-            h1 { font-size: 1.8rem; }
             .input-area { flex-direction: column; gap: 5px; }
             .input-group { width: 100%; }
         }
@@ -194,91 +170,77 @@
     </header>
 
     <div class="card">
-        <div class="card-content">
-            <h2>対局結果の登録</h2>
-            <div id="streakBanner" class="streak-banner"></div>
-            <div class="input-area">
-                <div class="input-group">
-                    <label style="color:var(--neon-pink); font-weight:bold; margin-bottom:5px;">Winner (勝者)</label>
-                    <select id="winnerSelect" class="player-select"></select>
-                </div>
-                <div class="vs-label">vs</div>
-                <div class="input-group">
-                    <label style="color:var(--neon-blue); font-weight:bold; margin-bottom:5px;">Loser (敗者)</label>
-                    <select id="loserSelect" class="player-select"></select>
-                </div>
+        <h2>対局結果の登録</h2>
+        <div id="streakBanner" class="streak-banner"></div>
+        <div class="input-area">
+            <div class="input-group">
+                <label style="color:var(--neon-pink); font-weight:bold; margin-bottom:5px;">Winner (勝者)</label>
+                <select id="winnerSelect" class="player-select"></select>
             </div>
-            <button class="register-btn" onclick="registerMatch()">結果を記録する</button>
+            <div class="vs-label">vs</div>
+            <div class="input-group">
+                <label style="color:var(--neon-blue); font-weight:bold; margin-bottom:5px;">Loser (敗者)</label>
+                <select id="loserSelect" class="player-select"></select>
+            </div>
         </div>
+        <button class="register-btn" onclick="registerMatch()">結果を記録する</button>
     </div>
 
     <div class="card">
-        <div class="card-content">
-            <h2>順位表（勝率順）</h2>
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th width="10%">順位</th>
-                        <th width="35%">氏名</th>
-                        <th width="20%">勝 - 負</th>
-                        <th width="15%">勝率</th>
-                        <th>試合数</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingBody"></tbody>
+        <h2>順位表（勝率順）</h2>
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th width="10%">順位</th>
+                    <th width="35%">氏名</th>
+                    <th width="20%">勝 - 負</th>
+                    <th width="15%">勝率</th>
+                    <th>試合数</th>
+                </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>対戦スコア表 (勝ち - 負け)</h2>
+        <div class="matrix-scroll">
+            <table class="matrix-table">
+                <thead id="matrixHead"></thead>
+                <tbody id="matrixBody"></tbody>
             </table>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-content">
-            <h2>対戦スコア表 (勝ち - 負け)</h2>
-            <div class="matrix-scroll">
-                <table class="matrix-table">
-                    <thead id="matrixHead"></thead>
-                    <tbody id="matrixBody"></tbody>
-                </table>
-            </div>
-        </div>
+        <h2>個人成績分析</h2>
+        <div id="statsList" class="stats-grid"></div>
     </div>
 
     <div class="card">
-        <div class="card-content">
-            <h2>個人成績分析</h2>
-            <div id="statsList" class="stats-grid"></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-content">
-            <h2>直近の対局履歴</h2>
-            <div id="historyList" class="history-list"></div>
-        </div>
+        <h2>直近の対局履歴</h2>
+        <div id="historyList" class="history-list"></div>
     </div>
 
     <div class="bottom-controls">
         <div class="card">
-            <div class="card-content">
-                <h2>参加者管理</h2>
-                <div id="playerList" style="margin-bottom:20px;"></div>
-                <div class="control-panel">
-                    <button class="action-btn" onclick="addPlayer()">＋ 参加者を追加</button>
-                    <button class="delete-btn" onclick="removePlayer()">－ 人数を減らす</button>
-                </div>
+            <h2>参加者管理</h2>
+            <div id="playerList" style="margin-bottom:20px;"></div>
+            <div class="control-panel">
+                <button class="action-btn" onclick="addPlayer()">＋ 参加者を追加</button>
+                <button class="delete-btn" onclick="removePlayer()">－ 人数を減らす</button>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-content">
-                <h2>データの引き継ぎ・バックアップ</h2>
-                <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
-                    ※データはブラウザ内に保存されています。別の端末に移す場合はファイルを保存してください。
-                </p>
-                <div class="control-panel">
-                    <button class="action-btn" onclick="exportData()">💾 データを保存 (ファイル書き出し)</button>
-                    <button class="action-btn" onclick="document.getElementById('importFile').click()">📂 データを読み込む (ファイル読み込み)</button>
-                    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
-                </div>
+            <h2>データの引き継ぎ・バックアップ</h2>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
+                ※データはブラウザ内に保存されています。別の端末に移す場合はファイルを保存してください。
+            </p>
+            <div class="control-panel">
+                <button class="action-btn" onclick="exportData()">💾 データを保存</button>
+                <button class="action-btn" onclick="document.getElementById('importFile').click()">📂 データを読み込む</button>
+                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
             </div>
         </div>
         
@@ -293,42 +255,44 @@
         let chartInstances = [];
 
         function init() {
-            // ローカルストレージをチェック
-            const json = localStorage.getItem('shogiInfiniteV4');
+            // ストレージキーを変更して前のバグデータの影響を受けないようにします
+            const STORAGE_KEY = 'shogiInfiniteV5';
+            const json = localStorage.getItem(STORAGE_KEY);
             
             if (json) {
-                // 保存データがあればそれを読み込む
-                const d = JSON.parse(json);
-                if (d.players) players = d.players;
-                if (d.matches) matches = d.matches;
-                if (d.lastUpdated) lastUpdated = d.lastUpdated;
-            } else {
-                // ★ データがない場合（初回）、指定された初期データをセット
+                try {
+                    const d = JSON.parse(json);
+                    if (d.players) players = d.players;
+                    if (d.matches) matches = d.matches;
+                    if (d.lastUpdated) lastUpdated = d.lastUpdated;
+                } catch(e) {
+                    console.error("Data load error", e);
+                }
+            }
+            
+            // データが空なら初期データをセット（吉谷・石井山・森岡）
+            if (players.length === 0) {
                 players = [
                     { id: 0, name: '吉谷 悠' },
                     { id: 1, name: '石井山 拓登' },
                     { id: 2, name: '森岡 凜太郎' }
                 ];
-
+                
                 matches = [];
-                // 初期データ生成ロジック：連勝システムがいきなり発動しないよう、勝ち負けを交互に入れる
-
                 // 1. 吉谷(0) vs 石井山(1) : 6勝6敗 (計12局)
                 for(let i=0; i<6; i++) {
-                    matches.push({ winner: 0, loser: 1, timestamp: Date.now() - 100000 });
-                    matches.push({ winner: 1, loser: 0, timestamp: Date.now() - 99000 });
+                    matches.push({ winner: 0, loser: 1, timestamp: Date.now() });
+                    matches.push({ winner: 1, loser: 0, timestamp: Date.now() });
                 }
-
                 // 2. 吉谷(0) vs 森岡(2) : 6勝6敗 (計12局)
                 for(let i=0; i<6; i++) {
-                    matches.push({ winner: 0, loser: 2, timestamp: Date.now() - 80000 });
-                    matches.push({ winner: 2, loser: 0, timestamp: Date.now() - 79000 });
+                    matches.push({ winner: 0, loser: 2, timestamp: Date.now() });
+                    matches.push({ winner: 2, loser: 0, timestamp: Date.now() });
                 }
-
                 // 3. 石井山(1) vs 森岡(2) : 4勝4敗 (計8局)
                 for(let i=0; i<4; i++) {
-                    matches.push({ winner: 1, loser: 2, timestamp: Date.now() - 60000 });
-                    matches.push({ winner: 2, loser: 1, timestamp: Date.now() - 59000 });
+                    matches.push({ winner: 1, loser: 2, timestamp: Date.now() });
+                    matches.push({ winner: 2, loser: 1, timestamp: Date.now() });
                 }
             }
             
@@ -336,15 +300,20 @@
         }
 
         function renderAll() {
-            updateSelectOptions();
-            renderPlayerInputs();
-            calculateAndRender();
-            renderHistory();
-            renderLastUpdated(); 
-            saveData();
+            try {
+                updateSelectOptions();
+                renderPlayerInputs();
+                calculateAndRender();
+                renderHistory();
+                renderLastUpdated(); 
+                saveData();
+            } catch(e) {
+                console.error("Rendering Error:", e);
+                // エラー時でもアラートが出ないように静かに失敗させるか、ログのみ
+            }
         }
 
-        // --- データ引き継ぎ機能 ---
+        // --- データ引き継ぎ ---
         function exportData() {
             const data = { players, matches, lastUpdated };
             const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -364,29 +333,30 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.players && data.matches) {
-                        if(confirm("現在のデータを上書きして、ファイルの内容を読み込みますか？")) {
+                        if(confirm("データを読み込みますか？")) {
                             players = data.players;
                             matches = data.matches;
                             lastUpdated = data.lastUpdated || "";
                             saveData();
                             renderAll();
-                            alert("データを復元しました！");
+                            alert("復元完了！");
                         }
                     } else {
-                        alert("ファイルの形式が正しくありません");
+                        alert("ファイル形式が違います");
                     }
                 } catch(err) {
-                    alert("読み込みに失敗しました");
+                    alert("読み込み失敗");
                 }
             };
             reader.readAsText(file);
-            input.value = ''; // reset
+            input.value = '';
         }
 
-        // --- 以下ロジック ---
+        // --- ロジック ---
         function updateSelectOptions() {
             const wSelect = document.getElementById('winnerSelect');
             const lSelect = document.getElementById('loserSelect');
+            if(!wSelect || !lSelect) return;
             const wVal = wSelect.value;
             const lVal = lSelect.value;
             wSelect.innerHTML = ''; lSelect.innerHTML = '';
@@ -394,9 +364,9 @@
                 const optW = document.createElement('option'); optW.value = p.id; optW.text = p.name; wSelect.appendChild(optW);
                 const optL = document.createElement('option'); optL.value = p.id; optL.text = p.name; lSelect.appendChild(optL);
             });
-            if(wVal !== "") wSelect.value = wVal;
-            if(lVal !== "") lSelect.value = lVal;
-            if (lSelect.value === wSelect.value && players.length > 1) {
+            if(wVal) wSelect.value = wVal;
+            if(lVal) lSelect.value = lVal;
+            if (players.length > 1 && lSelect.value === wSelect.value) {
                 lSelect.selectedIndex = (wSelect.selectedIndex + 1) % players.length;
             }
         }
@@ -421,20 +391,23 @@
                 stats[m.winner].wins++; stats[m.winner].total++; stats[m.winner].vs[m.loser]++; 
                 stats[m.loser].losses++; stats[m.loser].total++;
 
+                // 連勝計算
                 if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; else stats[m.winner].currentStreak++;
                 if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; else stats[m.loser].currentStreak--;
             });
 
-            // Streak Banner
+            // Banner
             const banner = document.getElementById('streakBanner');
             let topStreak = 0; let topStreakerName = "";
             stats.forEach(s => {
                 if (s.currentStreak >= 3 && s.currentStreak > topStreak) { topStreak = s.currentStreak; topStreakerName = s.name; }
             });
-            if (topStreak > 0) {
-                banner.style.display = "block";
-                banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
-            } else { banner.style.display = "none"; }
+            if (banner) {
+                if (topStreak > 0) {
+                    banner.style.display = "block";
+                    banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
+                } else { banner.style.display = "none"; }
+            }
 
             // Ranking
             let ranking = [...stats].sort((a, b) => {
@@ -442,65 +415,86 @@
                 if (rateB !== rateA) return rateB - rateA; return b.wins - a.wins;
             });
 
-            const rBody = document.getElementById('rankingBody'); rBody.innerHTML = '';
-            ranking.forEach((s, i) => {
-                const tr = document.createElement('tr');
-                let nameHtml = s.name; let badges = "";
-                if (i === 0 && s.total > 0) { tr.classList.add('rank-1'); badges += `<span class="badge badge-crown">👑</span>`; }
-                if (s.currentStreak >= 3) badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
-                if (s.currentStreak <= -3) badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
-                if (badges) nameHtml += `<br>${badges}`;
-                const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
-                tr.innerHTML = `<td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td><td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td><td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td><td>${rate}%</td><td>${s.total}</td>`;
-                rBody.appendChild(tr);
-            });
+            const rBody = document.getElementById('rankingBody');
+            if(rBody) {
+                rBody.innerHTML = '';
+                ranking.forEach((s, i) => {
+                    const tr = document.createElement('tr');
+                    let nameHtml = s.name; let badges = "";
+                    if (i === 0 && s.total > 0) { tr.classList.add('rank-1'); badges += `<span class="badge badge-crown">👑</span>`; }
+                    if (s.currentStreak >= 3) badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
+                    if (s.currentStreak <= -3) badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
+                    if (badges) nameHtml += `<br>${badges}`;
+                    const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
+                    tr.innerHTML = `<td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td><td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td><td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td><td>${rate}%</td><td>${s.total}</td>`;
+                    rBody.appendChild(tr);
+                });
+            }
 
             // Matrix
             const mHead = document.getElementById('matrixHead'); const mBody = document.getElementById('matrixBody');
-            let hHtml = '<tr><th></th>'; players.forEach(p => hHtml += `<th>${p.name}</th>`); hHtml += '</tr>'; mHead.innerHTML = hHtml;
-            mBody.innerHTML = '';
-            stats.forEach((rowP, i) => {
-               const tr = document.createElement('tr'); let rowHtml = `<th>${rowP.name}</th>`;
-               players.forEach((colP, j) => {
-                   if (i === j) rowHtml += '<td class="diagonal-cell"></td>';
-                   else {
-                       const wins = stats[i].vs[j]; const losses = stats[j].vs[i];
-                       let content = '-'; if (wins > 0 || losses > 0) content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
-                       rowHtml += `<td class="score-cell">${content}</td>`;
-                   }
-               });
-               tr.innerHTML = rowHtml; mBody.appendChild(tr);
-            });
+            if(mHead && mBody) {
+                let hHtml = '<tr><th></th>'; players.forEach(p => hHtml += `<th>${p.name}</th>`); hHtml += '</tr>'; mHead.innerHTML = hHtml;
+                mBody.innerHTML = '';
+                stats.forEach((rowP, i) => {
+                   const tr = document.createElement('tr'); let rowHtml = `<th>${rowP.name}</th>`;
+                   players.forEach((colP, j) => {
+                       if (i === j) rowHtml += '<td class="diagonal-cell"></td>';
+                       else {
+                           const wins = stats[i].vs[j]; const losses = stats[j].vs[i];
+                           let content = '-'; if (wins > 0 || losses > 0) content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
+                           rowHtml += `<td class="score-cell">${content}</td>`;
+                       }
+                   });
+                   tr.innerHTML = rowHtml; mBody.appendChild(tr);
+                });
+            }
+            
             renderCharts(stats);
         }
 
         function renderCharts(statsData) {
             const container = document.getElementById('statsList');
+            if(!container) return;
+            // メモリリーク防止のためインスタンス破棄
             chartInstances.forEach(c => c.destroy()); chartInstances = []; container.innerHTML = '';
+            
             statsData.forEach(p => {
                 const card = document.createElement('div'); card.className = 'stats-card';
                 const pieId = `pie-${p.id}`; const barId = `bar-${p.id}`;
                 card.innerHTML = `<div class="stats-header">${p.name}</div><div style="display:flex; flex-wrap:wrap; gap:10px;"><div style="flex:1; min-width:120px;"><canvas id="${pieId}"></canvas></div><div style="flex:1; min-width:120px;"><canvas id="${barId}"></canvas></div></div>`;
                 container.appendChild(card);
 
+                // Pie
                 const ctxPie = document.getElementById(pieId).getContext('2d');
                 chartInstances.push(new Chart(ctxPie, {
                     type: 'doughnut', data: { labels: ['Win', 'Loss'], datasets: [{ data: [p.wins, p.losses], backgroundColor: ['#ff00ff', '#00ffff'], borderWidth: 0 }] },
-                    options: { responsive: true, plugins: { legend: {display: false}, title: {display: true, text: '通算勝率', color: '#888', font: {family: "'M PLUS Rounded 1c'"}} } }
+                    options: { responsive: true, plugins: { legend: {display: false}, title: {display: true, text: '通算勝率', color: '#888'} } }
                 }));
 
+                // Bar
                 let labels = []; let data = [];
                 players.forEach((opp, idx) => { if (opp.id !== p.id) { labels.push(opp.name); data.push(p.vs[idx]); } });
                 const ctxBar = document.getElementById(barId).getContext('2d');
                 chartInstances.push(new Chart(ctxBar, {
-                    type: 'bar', data: { labels: labels, datasets: [{ label: '勝利数', data: data, backgroundColor: '#39ff14', borderColor: '#39ff14', borderWidth: 1 }] },
-                    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: {stepSize: 1, color: '#888', font: {family: "'M PLUS Rounded 1c'"}}, grid: {color: '#333'} }, x: { ticks: {color: '#888', font: {family: "'M PLUS Rounded 1c'"}}, grid: {display: false} } }, plugins: { legend: {display: false}, title: {display: true, text: '相手別勝利数', color: '#888', font: {family: "'M PLUS Rounded 1c'"}} } }
+                    type: 'bar', 
+                    data: { labels: labels, datasets: [{ label: '勝利数', data: data, backgroundColor: '#39ff14', borderColor: '#39ff14', borderWidth: 1 }] },
+                    options: { 
+                        responsive: true, 
+                        scales: { 
+                            y: { beginAtZero: true, ticks: {stepSize: 1, color: '#888'}, grid: {color: '#333'} }, 
+                            x: { ticks: {color: '#888'}, grid: {display: false} } 
+                        }, 
+                        plugins: { legend: {display: false}, title: {display: true, text: '相手別勝利数', color: '#888'} } 
+                    }
                 }));
             });
         }
 
         function renderHistory() {
-            const list = document.getElementById('historyList'); list.innerHTML = '';
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
             const reversedMatches = [...matches].reverse();
             reversedMatches.forEach((m, revIndex) => {
                 const originalIndex = matches.length - 1 - revIndex;
@@ -515,11 +509,11 @@
 
         function renderLastUpdated() {
             const el = document.getElementById('lastUpdatedDisplay');
-            el.innerText = lastUpdated ? `Last Updated: ${lastUpdated}` : `Last Updated: ----/--/-- --:--`;
+            if(el) el.innerText = lastUpdated ? `Last Updated: ${lastUpdated}` : `Last Updated: ----/--/-- --:--`;
         }
 
         function deleteMatch(index) {
-            if(confirm("この対局記録を取り消しますか？")) {
+            if(confirm("取り消しますか？")) {
                 matches.splice(index, 1);
                 const now = new Date();
                 lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -528,7 +522,9 @@
         }
 
         function renderPlayerInputs() {
-            const container = document.getElementById('playerList'); container.innerHTML = '';
+            const container = document.getElementById('playerList');
+            if(!container) return;
+            container.innerHTML = '';
             players.forEach((p, index) => {
                 const div = document.createElement('div'); div.className = 'player-input-row';
                 div.innerHTML = `<span style="color:#666; width:30px;">#${index + 1}</span><input type="text" value="${p.name}" oninput="updateName(${index}, this.value)">`;
@@ -539,26 +535,24 @@
         function addPlayer() { const newId = players.length; players.push({ id: newId, name: `プレイヤー${newId + 1}` }); renderAll(); }
         function removePlayer() {
             if (players.length <= 2) { alert("最低2名必要です"); return; }
-            if(!confirm("最後の人を削除しますか？\n※その人の対局記録も全て消えます")) return;
+            if(!confirm("削除しますか？")) return;
             const removedId = players.length - 1; players.pop();
             matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
         }
         function saveData() {
             const data = { players, matches, lastUpdated };
-            localStorage.setItem('shogiInfiniteV4', JSON.stringify(data));
-            document.getElementById('saveStatus').innerText = "自動保存中...";
-        }
-        function loadData() {
-            // init()内で処理しているため、ここでは空実装（既存関数との整合性のため残すか、initに統合）
-            // 実際はinit()がlocalStorageを直接見るように変更済み
+            localStorage.setItem('shogiInfiniteV5', JSON.stringify(data));
+            const el = document.getElementById('saveStatus');
+            if(el) el.innerText = "自動保存中...";
         }
         function resetData() {
-            if(confirm("全てのデータを削除して初期化しますか？\n※吉谷・石井山・森岡の初期状態に戻ります")) {
-                localStorage.removeItem('shogiInfiniteV4');
+            if(confirm("初期化しますか？\n（吉谷・石井山・森岡の初期状態に戻ります）")) {
+                localStorage.removeItem('shogiInfiniteV5');
                 location.reload();
             }
         }
 
+        // 開始
         init();
     </script>
 </body>
