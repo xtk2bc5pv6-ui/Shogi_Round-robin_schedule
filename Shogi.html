@@ -55,7 +55,7 @@
         }
         .last-updated { font-size: 0.8rem; color: #888; text-align: right; align-self: flex-end; }
 
-        /* カードデザイン */
+        /* カード */
         .card {
             background: var(--card-bg); padding: 20px; border-radius: 12px;
             border: 1px solid var(--neon-green);
@@ -65,18 +65,6 @@
         h2 {
             font-size: 1.3rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
             color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); font-weight: 700;
-        }
-
-        /* 連勝バナー */
-        .streak-banner {
-            background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
-            padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
-            display: none; text-shadow: 0 0 5px var(--neon-pink); animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(255, 0, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0); }
         }
 
         /* 入力エリア */
@@ -98,7 +86,23 @@
         }
         button.register-btn:hover { background: #fff; transform: scale(1.02); }
 
-        /* テーブル系 */
+        /* バナー・バッジ */
+        .streak-banner {
+            background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
+            padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
+            display: none; text-shadow: 0 0 5px var(--neon-pink); animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 0, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0); }
+        }
+        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .badge-crown { font-size: 1.2rem; }
+        .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); }
+        .badge-rain { border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); }
+
+        /* テーブル */
         table.ranking-table {
             width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
             border: 1px solid var(--neon-green); border-radius: 8px; overflow: hidden;
@@ -106,26 +110,31 @@
         table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; }
         table.ranking-table th { background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green); }
         .rank-1 { background-color: rgba(57, 255, 20, 0.1); font-weight: bold; }
-        
-        .badge { display: inline-block; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
-        .badge-crown { font-size: 1.2rem; }
-        .badge-fire { border: 1px solid #ff5722; color: #ff5722; background: rgba(255, 87, 34, 0.1); }
-        .badge-rain { border: 1px solid #2196f3; color: #2196f3; background: rgba(33, 150, 243, 0.1); }
+        .score-win { color: var(--neon-pink); font-weight: bold; }
+        .score-loss { color: var(--neon-blue); }
 
         /* マトリクス */
         .matrix-scroll { overflow-x: auto; }
         table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
         table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 10px; text-align: center; font-size: 1rem; }
         table.matrix-table th { background: #000; color: var(--neon-green); }
-        .score-win { color: var(--neon-pink); font-weight: bold; }
-        .score-loss { color: var(--neon-blue); }
         .diagonal-cell { background: #111; }
 
-        /* その他 */
+        /* グラフエリア */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
         .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; }
-        
+        /* 数値リスト */
+        .win-detail-list {
+            margin-top: 10px; padding: 10px; background: #111; border-radius: 8px; 
+            font-size: 0.9rem; max-height: 150px; overflow-y: auto;
+        }
+        .win-detail-item {
+            display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 4px 0;
+        }
+        .win-detail-item:last-child { border-bottom: none; }
+
+        /* 履歴・下部 */
         .history-list { max-height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
         .history-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; }
         
@@ -234,9 +243,6 @@
 
         <div class="card">
             <h2>データの引き継ぎ・バックアップ</h2>
-            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
-                ※データはブラウザ内に保存されています。別の端末に移す場合はファイルを保存してください。
-            </p>
             <div class="control-panel">
                 <button class="action-btn" onclick="exportData()">💾 データを保存</button>
                 <button class="action-btn" onclick="document.getElementById('importFile').click()">📂 データを読み込む</button>
@@ -253,13 +259,13 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
-        // ネオンカラーパレット（円グラフ用）
+        // ネオンカラーパレット
         const neonColors = [
             '#39ff14', '#00ffff', '#ff00ff', '#ffff00', 
             '#ff4500', '#adff2f', '#ff69b4', '#00ced1'
         ];
-        // データの保存キーをV6に変更して強制リセット
-        const STORAGE_KEY = 'shogiInfiniteV6';
+        // ★ バージョンを変更して強制リセット ★
+        const STORAGE_KEY = 'shogiInfiniteV7';
 
         function init() {
             const json = localStorage.getItem(STORAGE_KEY);
@@ -272,7 +278,6 @@
                 } catch(e) { console.error(e); }
             }
             
-            // データが空なら初期データ（吉谷・石井山・森岡）
             if (players.length === 0) {
                 players = [
                     { id: 0, name: '吉谷 悠' },
@@ -280,17 +285,17 @@
                     { id: 2, name: '森岡 凜太郎' }
                 ];
                 matches = [];
-                // 1. 吉谷(0) vs 石井山(1) : 6勝6敗
+                // 初期データ: 吉谷 6-6 石井山
                 for(let i=0; i<6; i++) {
                     matches.push({ winner: 0, loser: 1, timestamp: Date.now() });
                     matches.push({ winner: 1, loser: 0, timestamp: Date.now() });
                 }
-                // 2. 吉谷(0) vs 森岡(2) : 6勝6敗
+                // 吉谷 6-6 森岡
                 for(let i=0; i<6; i++) {
                     matches.push({ winner: 0, loser: 2, timestamp: Date.now() });
                     matches.push({ winner: 2, loser: 0, timestamp: Date.now() });
                 }
-                // 3. 石井山(1) vs 森岡(2) : 4勝4敗
+                // 石井山 4-4 森岡
                 for(let i=0; i<4; i++) {
                     matches.push({ winner: 1, loser: 2, timestamp: Date.now() });
                     matches.push({ winner: 2, loser: 1, timestamp: Date.now() });
@@ -311,42 +316,6 @@
             } catch(e) { console.error("Rendering Error:", e); }
         }
 
-        // --- データ引き継ぎ ---
-        function exportData() {
-            const data = { players, matches, lastUpdated };
-            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `shogi_data_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importData(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.players && data.matches) {
-                        if(confirm("データを読み込みますか？")) {
-                            players = data.players;
-                            matches = data.matches;
-                            lastUpdated = data.lastUpdated || "";
-                            saveData();
-                            renderAll();
-                            alert("復元完了！");
-                        }
-                    } else { alert("ファイル形式が違います"); }
-                } catch(err) { alert("読み込み失敗"); }
-            };
-            reader.readAsText(file);
-            input.value = '';
-        }
-
-        // --- ロジック ---
         function updateSelectOptions() {
             const wSelect = document.getElementById('winnerSelect');
             const lSelect = document.getElementById('loserSelect');
@@ -454,7 +423,27 @@
             statsData.forEach(p => {
                 const card = document.createElement('div'); card.className = 'stats-card';
                 const pieId = `pie-${p.id}`; const breakdownId = `breakdown-${p.id}`;
-                card.innerHTML = `<div class="stats-header">${p.name}</div><div style="display:flex; flex-wrap:wrap; gap:10px;"><div style="flex:1; min-width:120px;"><canvas id="${pieId}"></canvas></div><div style="flex:1; min-width:120px;"><canvas id="${breakdownId}"></canvas></div></div>`;
+                
+                // ★ グラフの下に数値リストを作成 ★
+                let breakdownListHtml = '<div class="win-detail-list">';
+                players.forEach((opp, idx) => {
+                   if(opp.id !== p.id && p.vs[idx] > 0) {
+                       breakdownListHtml += `<div class="win-detail-item"><span>vs ${opp.name}</span><span style="color:var(--neon-green); font-weight:bold;">${p.vs[idx]}勝</span></div>`;
+                   } 
+                });
+                breakdownListHtml += '</div>';
+
+                card.innerHTML = `
+                    <div class="stats-header">${p.name}</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                        <div style="flex:1; min-width:140px; max-width:200px;">
+                            <canvas id="${pieId}"></canvas>
+                        </div>
+                        <div style="flex:1; min-width:140px; max-width:200px;">
+                            <canvas id="${breakdownId}"></canvas>
+                            ${breakdownListHtml} </div>
+                    </div>
+                `;
                 container.appendChild(card);
 
                 // 1. 通算勝率 (Doughnut)
@@ -469,12 +458,10 @@
                 let labels = []; let data = []; let bgColors = [];
                 players.forEach((opp, idx) => { 
                     if (opp.id !== p.id && p.vs[idx] > 0) { 
-                        labels.push(opp.name); 
-                        data.push(p.vs[idx]);
+                        labels.push(opp.name); data.push(p.vs[idx]);
                         bgColors.push(neonColors[idx % neonColors.length]);
                     } 
                 });
-                
                 if (data.length === 0) { labels = ["勝利なし"]; data = [1]; bgColors = ["#333"]; }
 
                 const ctxBreakdown = document.getElementById(breakdownId).getContext('2d');
@@ -487,7 +474,7 @@
                     options: { 
                         responsive: true, 
                         plugins: { 
-                            legend: { display: true, labels: { color: '#ccc', font: {family: "'M PLUS Rounded 1c'", size:10} }, position: 'right' }, 
+                            legend: { display: true, position:'bottom', labels: { color: '#ccc', font: {family: "'M PLUS Rounded 1c'", size:10} } }, 
                             title: { display: true, text: '勝利内訳 (カモ度)', color: '#888', font: {family: "'M PLUS Rounded 1c'"} } 
                         } 
                     }
@@ -543,21 +530,16 @@
             const removedId = players.length - 1; players.pop();
             matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
         }
-        function saveData() {
+        function exportData() {
             const data = { players, matches, lastUpdated };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            const el = document.getElementById('saveStatus');
-            if(el) el.innerText = "自動保存中...";
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `shogi_data_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
         }
-        function resetData() {
-            if(confirm("初期化しますか？\n（吉谷・石井山・森岡の初期状態に戻ります）")) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
-        }
-
-        // 開始
-        init();
-    </script>
-</body>
-</html>
+        function importData(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.players
