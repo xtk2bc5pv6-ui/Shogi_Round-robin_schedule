@@ -5,31 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>将棋 3人総当たり戦 星取表</title>
     <style>
+        :root {
+            --bg-color: #121212; /* 背景色：ほぼ黒 */
+            --card-bg: #1e1e1e;  /* カード背景：少し明るい黒 */
+            --neon-green: #39ff14; /* 蛍光グリーン */
+            --neon-blue: #00ffff;  /* 蛍光シアン（負け色） */
+            --neon-pink: #ff00ff;  /* 蛍光ピンク（勝ち色） */
+            --text-color: #e0e0e0; /* 通常文字色 */
+        }
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            font-family: "Helvetica Neue", Arial, sans-serif;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--neon-green); /* 基本文字色を蛍光グリーンに */
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5); /* 文字を少し光らせる */
         }
         h1 {
             text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green); /* ネオン効果強化 */
+            letter-spacing: 2px;
         }
         .card {
-            background: white;
+            background: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            /* ネオン風の枠線と発光 */
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2), inset 0 0 5px rgba(57, 255, 20, 0.1);
+            margin-bottom: 25px;
         }
         h2 {
-            font-size: 1.1rem;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--neon-green);
+            padding-bottom: 10px;
             margin-top: 0;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
         }
         /* 入力エリア */
         .player-inputs {
@@ -37,28 +53,38 @@
             gap: 10px;
             margin-bottom: 20px;
         }
-        .player-inputs input {
+        input[type="text"], select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
+            padding: 10px;
+            border: 1px solid var(--neon-green);
             border-radius: 4px;
+            background-color: #000;
+            color: var(--neon-green);
+            font-size: 1rem;
+            box-shadow: inset 0 0 5px rgba(57, 255, 20, 0.3);
         }
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
         .match-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
         .match-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #f9f9f9;
-            padding: 10px;
+            background: #000;
+            padding: 15px;
             border-radius: 4px;
+            border: 1px solid #333;
         }
-        .match-row select {
-            padding: 5px;
-            font-size: 1rem;
+        .match-row span {
+             font-weight: bold;
+             color: var(--text-color);
         }
         
         /* 星取表 */
@@ -66,42 +92,76 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            border: 1px solid var(--neon-green);
         }
         th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid var(--neon-green);
+            padding: 12px 8px;
             text-align: center;
         }
         th {
-            background-color: #e0e0e0;
+            background-color: #000;
+            color: var(--neon-blue);
             font-weight: bold;
+            text-shadow: 0 0 5px var(--neon-blue);
         }
-        .rank-1 { background-color: #fff9c4; } /* 1位は薄い金 */
+        td {
+            color: var(--text-color);
+        }
+        .rank-1 { 
+            background-color: rgba(57, 255, 20, 0.1); /* 1位を少し光らせる */
+            box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
+        }
         
         /* 勝敗の色 */
-        .win { color: #d32f2f; font-weight: bold; } /* 赤 */
-        .loss { color: #1976d2; } /* 青 */
+        .win { color: var(--neon-pink); font-weight: bold; text-shadow: 0 0 8px var(--neon-pink); }
+        .loss { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
         
         button.reset-btn {
             display: block;
             width: 100%;
-            padding: 10px;
-            background-color: #666;
-            color: white;
-            border: none;
+            padding: 15px;
+            background-color: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px var(--neon-green);
+            box-shadow: 0 0 5px var(--neon-green);
         }
-        button.reset-btn:hover { background-color: #444; }
+        button.reset-btn:hover {
+            background-color: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
     </style>
 </head>
 <body>
 
-    <h1>将棋 3人総当たり戦 管理表</h1>
+    <h1>将棋電脳戦 総当たり表</h1>
 
     <div class="card">
-        <h2>対局者名</h2>
+        <h2>順位・星取表</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>順位</th>
+                    <th>氏名</th>
+                    <th>勝</th>
+                    <th>対戦結果</th>
+                </tr>
+            </thead>
+            <tbody id="rankingBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>対局者名エントリー</h2>
         <div class="player-inputs">
             <input type="text" id="p1Name" value="Aさん" oninput="updateNames()">
             <input type="text" id="p2Name" value="Bさん" oninput="updateNames()">
@@ -110,7 +170,7 @@
     </div>
 
     <div class="card">
-        <h2>対局結果入力</h2>
+        <h2>対局結果入力システム</h2>
         <div class="match-list">
             <div class="match-row">
                 <span id="labelMatch1">A vs B</span>
@@ -139,23 +199,7 @@
         </div>
     </div>
 
-    <div class="card">
-        <h2>順位・星取表</h2>
-        <table id="resultTable">
-            <thead>
-                <tr>
-                    <th>順位</th>
-                    <th>氏名</th>
-                    <th>勝</th>
-                    <th>対戦結果</th>
-                </tr>
-            </thead>
-            <tbody id="rankingBody">
-                </tbody>
-        </table>
-    </div>
-
-    <button class="reset-btn" onclick="resetAll()">リセット</button>
+    <button class="reset-btn" onclick="resetAll()">システムリセット</button>
 
     <script>
         // 初期データ
@@ -167,9 +211,9 @@
 
         // 名前更新
         function updateNames() {
-            players[0].name = document.getElementById('p1Name').value;
-            players[1].name = document.getElementById('p2Name').value;
-            players[2].name = document.getElementById('p3Name').value;
+            players[0].name = document.getElementById('p1Name').value || 'Aさん';
+            players[1].name = document.getElementById('p2Name').value || 'Bさん';
+            players[2].name = document.getElementById('p3Name').value || 'Cさん';
             
             updateLabels();
             calculate(); // 表の再描画
@@ -230,7 +274,7 @@
             processMatch(m2, 1, 2);
             processMatch(m3, 2, 0);
 
-            // 並べ替え用の配列をコピー（元のplayersの順番を変えると入力欄とズレるため）
+            // 並べ替え用の配列をコピー
             let ranking = JSON.parse(JSON.stringify(players));
 
             // ソート：勝ち数が多い順
@@ -242,10 +286,8 @@
 
             ranking.forEach((p, index) => {
                 const tr = document.createElement('tr');
-                if (index === 0) tr.classList.add('rank-1');
+                if (index === 0 && p.wins > 0) tr.classList.add('rank-1'); // 1勝以上で1位を強調
 
-                // 対戦結果の文字列作成（自分以外の相手との勝敗を表示）
-                // ※順位順ではなく、単純に誰に勝ったかを表示する簡易形式にしています
                 let details = [];
                 ranking.forEach(opponent => {
                     if (p.id !== opponent.id) {
@@ -258,10 +300,10 @@
                 });
 
                 tr.innerHTML = `
-                    <td>${index + 1}位</td>
-                    <td style="font-weight:bold;">${p.name}</td>
+                    <td style="font-weight:bold; color:var(--neon-blue)">${index + 1}位</td>
+                    <td style="font-weight:bold; font-size:1.1rem;">${p.name}</td>
                     <td>${p.wins}勝</td>
-                    <td style="font-size:0.9rem;">${details.join('<br>') || '対局なし'}</td>
+                    <td style="font-size:0.9rem;">${details.join('<br>') || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
