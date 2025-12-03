@@ -125,7 +125,6 @@
         .stats-card { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #333; }
         .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; }
         
-        /* グラフコンテナ */
         .charts-container {
             display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
         }
@@ -152,6 +151,8 @@
         button.delete-btn:hover { background: var(--danger-color); color: #fff; }
         button.reset-btn { display: block; width: 100%; margin-top: 10px; background: transparent; color: #666; border: 1px solid #666; padding: 10px; cursor: pointer; border-radius: 6px; }
         button.reset-btn:hover { background: #333; color: #fff; }
+        button.restore-btn { display: block; width: 100%; margin-top: 10px; background: #222; color: #ffd700; border: 1px solid #ffd700; padding: 10px; cursor: pointer; border-radius: 6px; font-weight: bold;}
+        button.restore-btn:hover { background: #ffd700; color: #000; }
         .delete-history-btn { background: #333; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
 
         @media (max-width: 600px) {
@@ -244,15 +245,16 @@
         </div>
 
         <div class="card">
-            <h2>データの引き継ぎ・バックアップ</h2>
+            <h2>データのバックアップ・復元</h2>
             <div class="control-panel">
                 <button class="action-btn" onclick="exportData()">💾 データを保存</button>
                 <button class="action-btn" onclick="document.getElementById('importFile').click()">📂 データを読み込む</button>
                 <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
             </div>
+            <button class="restore-btn" onclick="restorePresetData()">⚠️ 初期データ（吉谷・石井山・森岡）に戻す</button>
         </div>
         
-        <button class="reset-btn" onclick="resetData()">全データをリセット（初期化）</button>
+        <button class="reset-btn" onclick="resetData()">全データをリセット（完全に空にする）</button>
         <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:5px;" id="saveStatus"></div>
     </div>
 
@@ -261,12 +263,324 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
-        // ★ バージョンを変更して強制リセット ★
-        const STORAGE_KEY = 'shogiInfiniteV8';
+        // ★ バージョンを変更してリフレッシュ（V9） ★
+        const STORAGE_KEY = 'shogiInfiniteV9';
 
         function init() {
             const json = localStorage.getItem(STORAGE_KEY);
             if (json) {
                 try {
                     const d = JSON.parse(json);
-                    if (
+                    if (d.players) players = d.players;
+                    if (d.matches) matches = d.matches;
+                    if (d.lastUpdated) lastUpdated = d.lastUpdated;
+                } catch(e) { console.error(e); }
+            }
+            
+            // データが空なら強制的にプリセットロード
+            if (players.length === 0) {
+                loadPresetData();
+            }
+            
+            renderAll();
+        }
+
+        // 初期データ生成ロジック
+        function loadPresetData() {
+            players = [
+                { id: 0, name: '吉谷 悠' },
+                { id: 1, name: '石井山 拓登' },
+                { id: 2, name: '森岡 凜太郎' }
+            ];
+            matches = [];
+            // 吉谷 6-6 石井山
+            for(let i=0; i<6; i++) {
+                matches.push({ winner: 0, loser: 1, timestamp: Date.now() });
+                matches.push({ winner: 1, loser: 0, timestamp: Date.now() });
+            }
+            // 吉谷 6-6 森岡
+            for(let i=0; i<6; i++) {
+                matches.push({ winner: 0, loser: 2, timestamp: Date.now() });
+                matches.push({ winner: 2, loser: 0, timestamp: Date.now() });
+            }
+            // 石井山 4-4 森岡
+            for(let i=0; i<4; i++) {
+                matches.push({ winner: 1, loser: 2, timestamp: Date.now() });
+                matches.push({ winner: 2, loser: 1, timestamp: Date.now() });
+            }
+        }
+
+        function restorePresetData() {
+            if(confirm("現在のデータをすべて消去し、\n吉谷・石井山・森岡の初期成績に戻しますか？")) {
+                loadPresetData();
+                saveData();
+                renderAll();
+                alert("初期データを復元しました！");
+            }
+        }
+
+        function renderAll() {
+            try {
+                updateSelectOptions();
+                renderPlayerInputs();
+                calculateAndRender();
+                renderHistory();
+                renderLastUpdated(); 
+                saveData();
+            } catch(e) { console.error("Rendering Error:", e); }
+        }
+
+        function updateSelectOptions() {
+            const wSelect = document.getElementById('winnerSelect');
+            const lSelect = document.getElementById('loserSelect');
+            if(!wSelect || !lSelect) return;
+            const wVal = wSelect.value;
+            const lVal = lSelect.value;
+            wSelect.innerHTML = ''; lSelect.innerHTML = '';
+            players.forEach(p => {
+                const optW = document.createElement('option'); optW.value = p.id; optW.text = p.name; wSelect.appendChild(optW);
+                const optL = document.createElement('option'); optL.value = p.id; optL.text = p.name; lSelect.appendChild(optL);
+            });
+            if(wVal) wSelect.value = wVal;
+            if(lVal) lSelect.value = lVal;
+            if (players.length > 1 && lSelect.value === wSelect.value) {
+                lSelect.selectedIndex = (wSelect.selectedIndex + 1) % players.length;
+            }
+        }
+
+        function registerMatch() {
+            const wId = parseInt(document.getElementById('winnerSelect').value);
+            const lId = parseInt(document.getElementById('loserSelect').value);
+            if (wId === lId) { alert("勝者と敗者が同じです"); return; }
+            matches.push({ winner: wId, loser: lId, timestamp: Date.now() });
+            const now = new Date();
+            lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            renderAll();
+        }
+
+        function calculateAndRender() {
+            let stats = players.map(p => ({
+                id: p.id, name: p.name, wins: 0, losses: 0, total: 0, vs: Array(players.length).fill(0), currentStreak: 0
+            }));
+
+            matches.forEach(m => {
+                if (!stats[m.winner] || !stats[m.loser]) return;
+                stats[m.winner].wins++; stats[m.winner].total++; stats[m.winner].vs[m.loser]++; 
+                stats[m.loser].losses++; stats[m.loser].total++;
+
+                if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; else stats[m.winner].currentStreak++;
+                if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; else stats[m.loser].currentStreak--;
+            });
+
+            // Banner
+            const banner = document.getElementById('streakBanner');
+            let topStreak = 0; let topStreakerName = "";
+            stats.forEach(s => {
+                if (s.currentStreak >= 3 && s.currentStreak > topStreak) { topStreak = s.currentStreak; topStreakerName = s.name; }
+            });
+            if (banner) {
+                if (topStreak > 0) {
+                    banner.style.display = "block";
+                    banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
+                } else { banner.style.display = "none"; }
+            }
+
+            // Ranking
+            let ranking = [...stats].sort((a, b) => {
+                const rateA = a.total ? a.wins / a.total : 0; const rateB = b.total ? b.wins / b.total : 0;
+                if (rateB !== rateA) return rateB - rateA; return b.wins - a.wins;
+            });
+
+            const rBody = document.getElementById('rankingBody');
+            if(rBody) {
+                rBody.innerHTML = '';
+                ranking.forEach((s, i) => {
+                    const tr = document.createElement('tr');
+                    let nameHtml = s.name; let badges = "";
+                    if (i === 0 && s.total > 0) { tr.classList.add('rank-1'); badges += `<span class="badge badge-crown">👑</span>`; }
+                    if (s.currentStreak >= 3) badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
+                    if (s.currentStreak <= -3) badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
+                    if (badges) nameHtml += `<br>${badges}`;
+                    const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
+                    tr.innerHTML = `<td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td><td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td><td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td><td>${rate}%</td><td>${s.total}</td>`;
+                    rBody.appendChild(tr);
+                });
+            }
+
+            // Matrix
+            const mHead = document.getElementById('matrixHead'); const mBody = document.getElementById('matrixBody');
+            if(mHead && mBody) {
+                let hHtml = '<tr><th></th>'; players.forEach(p => hHtml += `<th>${p.name}</th>`); hHtml += '</tr>'; mHead.innerHTML = hHtml;
+                mBody.innerHTML = '';
+                stats.forEach((rowP, i) => {
+                   const tr = document.createElement('tr'); let rowHtml = `<th>${rowP.name}</th>`;
+                   players.forEach((colP, j) => {
+                       if (i === j) rowHtml += '<td class="diagonal-cell"></td>';
+                       else {
+                           const wins = stats[i].vs[j]; const losses = stats[j].vs[i];
+                           let content = '-'; if (wins > 0 || losses > 0) content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
+                           rowHtml += `<td class="score-cell">${content}</td>`;
+                       }
+                   });
+                   tr.innerHTML = rowHtml; mBody.appendChild(tr);
+                });
+            }
+            
+            renderCharts(stats);
+        }
+
+        function renderCharts(statsData) {
+            const container = document.getElementById('statsList');
+            if(!container) return;
+            chartInstances.forEach(c => c.destroy()); chartInstances = []; container.innerHTML = '';
+            
+            statsData.forEach(p => {
+                const card = document.createElement('div'); card.className = 'stats-card';
+                
+                // 対戦相手別（個別グラフ）
+                const opponents = players.filter(opp => opp.id !== p.id);
+                let chartsHtml = `<div class="charts-container">`;
+                
+                opponents.forEach(opp => {
+                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
+                    const win = p.vs[opp.id];
+                    const loss = statsData[opp.id].vs[p.id];
+                    
+                    chartsHtml += `
+                        <div class="chart-wrapper">
+                            <div class="chart-title">vs ${opp.name}</div>
+                            <div style="height:140px;">
+                                <canvas id="${canvasId}"></canvas>
+                            </div>
+                            <div class="chart-score">
+                                <span class="score-win">${win}勝</span> - <span class="score-loss">${loss}敗</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                chartsHtml += `</div>`;
+
+                card.innerHTML = `<div class="stats-header">${p.name}</div>` + chartsHtml;
+                container.appendChild(card);
+
+                opponents.forEach(opp => {
+                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
+                    const ctx = document.getElementById(canvasId).getContext('2d');
+                    const win = p.vs[opp.id];
+                    const loss = statsData[opp.id].vs[p.id];
+
+                    let chartData = [win, loss];
+                    let chartColors = ['#ff00ff', '#00ffff'];
+                    if (win === 0 && loss === 0) {
+                        chartData = [1]; chartColors = ['#333']; 
+                    }
+
+                    chartInstances.push(new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Win', 'Loss'],
+                            datasets: [{
+                                data: chartData,
+                                backgroundColor: chartColors,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: (win > 0 || loss > 0) }
+                            }
+                        }
+                    }));
+                });
+            });
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
+            const reversedMatches = [...matches].reverse();
+            reversedMatches.forEach((m, revIndex) => {
+                const originalIndex = matches.length - 1 - revIndex;
+                const winnerName = players[m.winner] ? players[m.winner].name : "不明";
+                const loserName = players[m.loser] ? players[m.loser].name : "不明";
+                const div = document.createElement('div'); div.className = 'history-item';
+                div.innerHTML = `<div class="history-text"><span style="color:var(--neon-pink)">○ ${winnerName}</span> vs <span style="color:var(--neon-blue)">● ${loserName}</span></div><button class="delete-history-btn" onclick="deleteMatch(${originalIndex})">取消</button>`;
+                list.appendChild(div);
+            });
+            if (matches.length === 0) list.innerHTML = '<div style="color:#666; text-align:center; padding:10px;">対局履歴なし</div>';
+        }
+
+        function renderLastUpdated() {
+            const el = document.getElementById('lastUpdatedDisplay');
+            if(el) el.innerText = lastUpdated ? `Last Updated: ${lastUpdated}` : `Last Updated: ----/--/-- --:--`;
+        }
+
+        function deleteMatch(index) {
+            if(confirm("取り消しますか？")) {
+                matches.splice(index, 1);
+                const now = new Date();
+                lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                renderAll();
+            }
+        }
+
+        function renderPlayerInputs() {
+            const container = document.getElementById('playerList');
+            if(!container) return;
+            container.innerHTML = '';
+            players.forEach((p, index) => {
+                const div = document.createElement('div'); div.className = 'player-input-row';
+                div.innerHTML = `<span style="color:#666; width:30px;">#${index + 1}</span><input type="text" value="${p.name}" oninput="updateName(${index}, this.value)">`;
+                container.appendChild(div);
+            });
+        }
+        function updateName(idx, val) { players[idx].name = val; updateSelectOptions(); calculateAndRender(); saveData(); }
+        function addPlayer() { const newId = players.length; players.push({ id: newId, name: `プレイヤー${newId + 1}` }); renderAll(); }
+        function removePlayer() {
+            if (players.length <= 2) { alert("最低2名必要です"); return; }
+            if(!confirm("削除しますか？")) return;
+            const removedId = players.length - 1; players.pop();
+            matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
+        }
+        function exportData() {
+            const data = { players, matches, lastUpdated };
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `shogi_data_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
+        }
+        function importData(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.players && data.matches) {
+                        if(confirm("復元しますか？")) {
+                            players = data.players; matches = data.matches; lastUpdated = data.lastUpdated || "";
+                            saveData(); renderAll(); alert("完了！");
+                        }
+                    } else { alert("形式エラー"); }
+                } catch(err) { alert("エラー"); }
+            };
+            reader.readAsText(file); input.value = '';
+        }
+        function saveData() {
+            const data = { players, matches, lastUpdated };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            const el = document.getElementById('saveStatus');
+            if(el) el.innerText = "自動保存中...";
+        }
+        function resetData() {
+            if(confirm("本当にデータを全て消しますか？\n（空っぽになります）")) {
+                localStorage.removeItem(STORAGE_KEY); location.reload();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
