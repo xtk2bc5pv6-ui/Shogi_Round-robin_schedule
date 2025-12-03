@@ -253,43 +253,44 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
+        // ネオンカラーパレット（円グラフ用）
+        const neonColors = [
+            '#39ff14', '#00ffff', '#ff00ff', '#ffff00', 
+            '#ff4500', '#adff2f', '#ff69b4', '#00ced1'
+        ];
+        // データの保存キーをV6に変更して強制リセット
+        const STORAGE_KEY = 'shogiInfiniteV6';
 
         function init() {
-            // ストレージキーを変更して前のバグデータの影響を受けないようにします
-            const STORAGE_KEY = 'shogiInfiniteV5';
             const json = localStorage.getItem(STORAGE_KEY);
-            
             if (json) {
                 try {
                     const d = JSON.parse(json);
                     if (d.players) players = d.players;
                     if (d.matches) matches = d.matches;
                     if (d.lastUpdated) lastUpdated = d.lastUpdated;
-                } catch(e) {
-                    console.error("Data load error", e);
-                }
+                } catch(e) { console.error(e); }
             }
             
-            // データが空なら初期データをセット（吉谷・石井山・森岡）
+            // データが空なら初期データ（吉谷・石井山・森岡）
             if (players.length === 0) {
                 players = [
                     { id: 0, name: '吉谷 悠' },
                     { id: 1, name: '石井山 拓登' },
                     { id: 2, name: '森岡 凜太郎' }
                 ];
-                
                 matches = [];
-                // 1. 吉谷(0) vs 石井山(1) : 6勝6敗 (計12局)
+                // 1. 吉谷(0) vs 石井山(1) : 6勝6敗
                 for(let i=0; i<6; i++) {
                     matches.push({ winner: 0, loser: 1, timestamp: Date.now() });
                     matches.push({ winner: 1, loser: 0, timestamp: Date.now() });
                 }
-                // 2. 吉谷(0) vs 森岡(2) : 6勝6敗 (計12局)
+                // 2. 吉谷(0) vs 森岡(2) : 6勝6敗
                 for(let i=0; i<6; i++) {
                     matches.push({ winner: 0, loser: 2, timestamp: Date.now() });
                     matches.push({ winner: 2, loser: 0, timestamp: Date.now() });
                 }
-                // 3. 石井山(1) vs 森岡(2) : 4勝4敗 (計8局)
+                // 3. 石井山(1) vs 森岡(2) : 4勝4敗
                 for(let i=0; i<4; i++) {
                     matches.push({ winner: 1, loser: 2, timestamp: Date.now() });
                     matches.push({ winner: 2, loser: 1, timestamp: Date.now() });
@@ -307,10 +308,7 @@
                 renderHistory();
                 renderLastUpdated(); 
                 saveData();
-            } catch(e) {
-                console.error("Rendering Error:", e);
-                // エラー時でもアラートが出ないように静かに失敗させるか、ログのみ
-            }
+            } catch(e) { console.error("Rendering Error:", e); }
         }
 
         // --- データ引き継ぎ ---
@@ -341,12 +339,8 @@
                             renderAll();
                             alert("復元完了！");
                         }
-                    } else {
-                        alert("ファイル形式が違います");
-                    }
-                } catch(err) {
-                    alert("読み込み失敗");
-                }
+                    } else { alert("ファイル形式が違います"); }
+                } catch(err) { alert("読み込み失敗"); }
             };
             reader.readAsText(file);
             input.value = '';
@@ -391,7 +385,6 @@
                 stats[m.winner].wins++; stats[m.winner].total++; stats[m.winner].vs[m.loser]++; 
                 stats[m.loser].losses++; stats[m.loser].total++;
 
-                // 連勝計算
                 if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; else stats[m.winner].currentStreak++;
                 if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; else stats[m.loser].currentStreak--;
             });
@@ -456,36 +449,47 @@
         function renderCharts(statsData) {
             const container = document.getElementById('statsList');
             if(!container) return;
-            // メモリリーク防止のためインスタンス破棄
             chartInstances.forEach(c => c.destroy()); chartInstances = []; container.innerHTML = '';
             
             statsData.forEach(p => {
                 const card = document.createElement('div'); card.className = 'stats-card';
-                const pieId = `pie-${p.id}`; const barId = `bar-${p.id}`;
-                card.innerHTML = `<div class="stats-header">${p.name}</div><div style="display:flex; flex-wrap:wrap; gap:10px;"><div style="flex:1; min-width:120px;"><canvas id="${pieId}"></canvas></div><div style="flex:1; min-width:120px;"><canvas id="${barId}"></canvas></div></div>`;
+                const pieId = `pie-${p.id}`; const breakdownId = `breakdown-${p.id}`;
+                card.innerHTML = `<div class="stats-header">${p.name}</div><div style="display:flex; flex-wrap:wrap; gap:10px;"><div style="flex:1; min-width:120px;"><canvas id="${pieId}"></canvas></div><div style="flex:1; min-width:120px;"><canvas id="${breakdownId}"></canvas></div></div>`;
                 container.appendChild(card);
 
-                // Pie
+                // 1. 通算勝率 (Doughnut)
                 const ctxPie = document.getElementById(pieId).getContext('2d');
                 chartInstances.push(new Chart(ctxPie, {
-                    type: 'doughnut', data: { labels: ['Win', 'Loss'], datasets: [{ data: [p.wins, p.losses], backgroundColor: ['#ff00ff', '#00ffff'], borderWidth: 0 }] },
-                    options: { responsive: true, plugins: { legend: {display: false}, title: {display: true, text: '通算勝率', color: '#888'} } }
+                    type: 'doughnut', 
+                    data: { labels: ['Win', 'Loss'], datasets: [{ data: [p.wins, p.losses], backgroundColor: ['#ff00ff', '#00ffff'], borderWidth: 0 }] },
+                    options: { responsive: true, plugins: { legend: {display: false}, title: {display: true, text: '通算勝率', color: '#888', font: {family: "'M PLUS Rounded 1c'"}} } }
                 }));
 
-                // Bar
-                let labels = []; let data = [];
-                players.forEach((opp, idx) => { if (opp.id !== p.id) { labels.push(opp.name); data.push(p.vs[idx]); } });
-                const ctxBar = document.getElementById(barId).getContext('2d');
-                chartInstances.push(new Chart(ctxBar, {
-                    type: 'bar', 
-                    data: { labels: labels, datasets: [{ label: '勝利数', data: data, backgroundColor: '#39ff14', borderColor: '#39ff14', borderWidth: 1 }] },
+                // 2. 相手別勝利数 (Doughnut)
+                let labels = []; let data = []; let bgColors = [];
+                players.forEach((opp, idx) => { 
+                    if (opp.id !== p.id && p.vs[idx] > 0) { 
+                        labels.push(opp.name); 
+                        data.push(p.vs[idx]);
+                        bgColors.push(neonColors[idx % neonColors.length]);
+                    } 
+                });
+                
+                if (data.length === 0) { labels = ["勝利なし"]; data = [1]; bgColors = ["#333"]; }
+
+                const ctxBreakdown = document.getElementById(breakdownId).getContext('2d');
+                chartInstances.push(new Chart(ctxBreakdown, {
+                    type: 'doughnut',
+                    data: { 
+                        labels: labels, 
+                        datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 1, borderColor: '#000' }] 
+                    },
                     options: { 
                         responsive: true, 
-                        scales: { 
-                            y: { beginAtZero: true, ticks: {stepSize: 1, color: '#888'}, grid: {color: '#333'} }, 
-                            x: { ticks: {color: '#888'}, grid: {display: false} } 
-                        }, 
-                        plugins: { legend: {display: false}, title: {display: true, text: '相手別勝利数', color: '#888'} } 
+                        plugins: { 
+                            legend: { display: true, labels: { color: '#ccc', font: {family: "'M PLUS Rounded 1c'", size:10} }, position: 'right' }, 
+                            title: { display: true, text: '勝利内訳 (カモ度)', color: '#888', font: {family: "'M PLUS Rounded 1c'"} } 
+                        } 
                     }
                 }));
             });
@@ -541,13 +545,13 @@
         }
         function saveData() {
             const data = { players, matches, lastUpdated };
-            localStorage.setItem('shogiInfiniteV5', JSON.stringify(data));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             const el = document.getElementById('saveStatus');
             if(el) el.innerText = "自動保存中...";
         }
         function resetData() {
             if(confirm("初期化しますか？\n（吉谷・石井山・森岡の初期状態に戻ります）")) {
-                localStorage.removeItem('shogiInfiniteV5');
+                localStorage.removeItem(STORAGE_KEY);
                 location.reload();
             }
         }
