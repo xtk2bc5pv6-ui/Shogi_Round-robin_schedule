@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>将棋 通算勝敗表 (完全版)</title>
+    <title>将棋 通算勝敗表</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
         }
         body {
             font-family: "M PLUS Rounded 1c", sans-serif;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             background-color: var(--bg-color);
@@ -47,7 +47,7 @@
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .shogi-icon svg {
-            width: 60px; height: 60px; fill: none; stroke: var(--neon-green); stroke-width: 3;
+            width: 70px; height: 70px; fill: none; stroke: var(--neon-green); stroke-width: 3;
             filter: drop-shadow(0 0 5px var(--neon-green));
         }
         .title-group { display: flex; flex-direction: column; }
@@ -59,40 +59,40 @@
             font-size: 1rem; color: var(--neon-blue); letter-spacing: 3px; font-weight: 700;
             text-shadow: 0 0 5px var(--neon-blue);
         }
-        .last-updated { font-size: 0.8rem; color: #888; text-align: right; align-self: flex-end; }
+        .last-updated { font-size: 0.9rem; color: #888; text-align: right; align-self: flex-end; }
 
         /* カード */
         .card {
-            background: var(--card-bg); padding: 20px; border-radius: 12px;
+            background: var(--card-bg); padding: 25px; border-radius: 12px;
             border: 1px solid var(--neon-green);
             box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
-            margin-bottom: 25px; position: relative;
+            margin-bottom: 30px; position: relative;
         }
         h2 {
-            font-size: 1.3rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
+            font-size: 1.4rem; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; margin-top: 0;
             color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue); font-weight: 700;
         }
 
         /* 入力エリア */
         .input-area {
-            display: flex; gap: 15px; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid #444;
+            display: flex; gap: 20px; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.5); padding: 25px; border-radius: 12px; border: 1px solid #444;
         }
         .input-group { display: flex; flex-direction: column; width: 45%; }
-        .vs-label { font-size: 1.5rem; font-weight: 800; color: #666; margin-top: 20px; }
+        .vs-label { font-size: 1.8rem; font-weight: 800; color: #666; margin-top: 0; }
         select.player-select {
             width: 100%; padding: 12px; background: #222; color: #fff;
             border: 1px solid var(--neon-green); border-radius: 8px; font-size: 1.1rem;
             font-family: inherit; cursor: pointer;
         }
         button.register-btn {
-            width: 100%; margin-top: 15px; padding: 15px; background: var(--neon-green);
-            color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.2rem;
+            width: 100%; margin-top: 20px; padding: 15px; background: var(--neon-green);
+            color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 1.3rem;
             cursor: pointer; box-shadow: 0 0 15px var(--neon-green); font-family: inherit; transition: 0.2s;
         }
         button.register-btn:hover { background: #fff; transform: scale(1.02); }
 
-        /* バナー・バッジ */
+        /* バナー */
         .streak-banner {
             background: rgba(0, 0, 0, 0.6); border: 1px dashed var(--neon-pink); color: var(--neon-pink);
             padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; font-weight: bold;
@@ -111,10 +111,10 @@
         /* テーブル */
         .table-responsive { overflow-x: auto; }
         table.ranking-table {
-            width: 100%; min-width: 500px; border-collapse: separate; border-spacing: 0; margin-top: 10px;
+            width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; margin-top: 10px;
             border: 1px solid var(--neon-green); border-radius: 8px; overflow: hidden;
         }
-        table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; }
+        table.ranking-table th, table.ranking-table td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #333; font-size: 1rem; }
         table.ranking-table th { background-color: #000; color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--neon-green); }
         .rank-1 { background-color: rgba(57, 255, 20, 0.1); font-weight: bold; }
         .score-win { color: var(--neon-pink); font-weight: bold; }
@@ -122,7 +122,7 @@
 
         /* マトリクス */
         .matrix-scroll { overflow-x: auto; }
-        table.matrix-table { width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 10px; }
+        table.matrix-table { width: 100%; min-width: 400px; border-collapse: collapse; margin-top: 10px; }
         table.matrix-table th, table.matrix-table td { border: 1px solid #444; padding: 10px; text-align: center; font-size: 1rem; }
         table.matrix-table th { background: #000; color: var(--neon-green); }
         .diagonal-cell { background: #111; }
@@ -133,7 +133,7 @@
         .stats-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 1.2rem; }
         
         .charts-container {
-            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
         }
         .chart-wrapper {
             flex: 1; min-width: 140px; max-width: 220px; text-align: center;
@@ -143,11 +143,11 @@
         .chart-score { font-size: 1rem; margin-top: 5px; font-weight: bold; }
 
         /* 履歴・下部 */
-        .history-list { max-height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
-        .history-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; }
+        .history-list { max-height: 250px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+        .history-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
         
         .bottom-controls { margin-top: 50px; padding-top: 20px; border-top: 1px dashed #444; }
-        .control-panel { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .control-panel { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
         .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
         input[type="text"] { padding: 10px; background: #000; border: 1px solid #444; color: var(--neon-green); flex-grow: 1; border-radius: 6px; font-family: inherit; }
         
@@ -178,9 +178,11 @@
         @media (max-width: 600px) {
             .header-container { flex-direction: column; text-align: center; gap: 10px; }
             .header-left { flex-direction: column; }
-            .input-area { flex-direction: column; gap: 5px; }
+            .input-area { flex-direction: column; gap: 10px; }
             .input-group { width: 100%; }
             .control-panel button { width: 100%; justify-content: center; }
+            .charts-container { gap: 10px; }
+            .chart-wrapper { min-width: 45%; max-width: 100%; }
         }
     </style>
 </head>
@@ -212,12 +214,12 @@
         <div id="streakBanner" class="streak-banner"></div>
         <div class="input-area">
             <div class="input-group">
-                <label style="color:var(--neon-pink); font-weight:bold; margin-bottom:5px;">Winner (勝者)</label>
+                <label style="color:var(--neon-pink); font-weight:bold;">Winner (勝者)</label>
                 <select id="winnerSelect" class="player-select"></select>
             </div>
             <div class="vs-label">vs</div>
             <div class="input-group">
-                <label style="color:var(--neon-blue); font-weight:bold; margin-bottom:5px;">Loser (敗者)</label>
+                <label style="color:var(--neon-blue); font-weight:bold;">Loser (敗者)</label>
                 <select id="loserSelect" class="player-select"></select>
             </div>
         </div>
@@ -275,8 +277,7 @@
         <div class="card">
             <h2>Excelファイルでデータ管理</h2>
             <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px; text-align:center;">
-                ※サイトを閉じる前に「Excel保存」を推奨します。<br>
-                ※「Excel読込」で保存したデータを復元できます。
+                ※初期データ（吉谷・石井山・森岡）の記録はここから作成できます。
             </p>
             <div class="control-panel">
                 <button class="excel-btn" onclick="exportExcel()">
@@ -304,22 +305,19 @@
         let matches = []; 
         let lastUpdated = ""; 
         let chartInstances = [];
-        // 新しいストレージキーで強制リセット
-        const STORAGE_KEY = 'shogiInfiniteV13_Stable';
+        // 強制リフレッシュ用V14
+        const STORAGE_KEY = 'shogiInfiniteV14_Secure';
 
         // ページ読み込み完了後に初期化（画面真っ暗防止）
         window.addEventListener('DOMContentLoaded', () => {
-            // 少し待ってから実行（スタイル適用待ち）
             setTimeout(() => {
                 init();
-                // 読み込み完了したらローディング画面を消す
                 const loader = document.getElementById('loading-screen');
                 if(loader) loader.style.display = 'none';
             }, 500);
         });
 
         function init() {
-            // まずLocalStorageをチェック
             const json = localStorage.getItem(STORAGE_KEY);
             if (json) {
                 try {
@@ -365,7 +363,6 @@
 
         // ★ 初期データ入りExcelのダウンロード（新規作成） ★
         function downloadInitialExcel() {
-            // 一時的に初期データを生成
             const initPlayers = [
                 { id: 0, name: '吉谷 悠' },
                 { id: 1, name: '石井山 拓登' },
@@ -386,7 +383,7 @@
             }
 
             if (typeof XLSX === 'undefined') {
-                alert("Excel機能の読み込み中です。");
+                alert("Excel機能の読み込み中です。少し待ってから再度押してください。");
                 return;
             }
 
@@ -399,6 +396,7 @@
 
             const wb = XLSX.utils.book_new();
             const wsMatches = XLSX.utils.json_to_sheet(matchData);
+            // 列幅調整
             wsMatches['!cols'] = [{wch:25}, {wch:15}, {wch:15}];
             XLSX.utils.book_append_sheet(wb, wsMatches, "対戦履歴");
             const wsPlayers = XLSX.utils.json_to_sheet(playerData);
@@ -428,299 +426,11 @@
             XLSX.writeFile(wb, `将棋勝敗表_${dateStr}.xlsx`);
         }
 
-        // --- Excel読み込み (Import) ---
+        // --- Excel読み込み (Import) ★ここに日時反映ロジック追加★ ---
         function importExcel(input) {
             const file = input.files[0];
             if(!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const wb = XLSX.read(data, { type: 'array' });
-                    const sheetMatches = wb.Sheets["対戦履歴"];
-                    const sheetPlayers = wb.Sheets["参加者リスト"];
-
-                    if(!sheetMatches || !sheetPlayers) {
-                        alert("エラー: 必要なシートが見つかりません。");
-                        return;
-                    }
-
-                    const jsonPlayers = XLSX.utils.sheet_to_json(sheetPlayers);
-                    const jsonMatches = XLSX.utils.sheet_to_json(sheetMatches);
-
-                    if(confirm("Excelデータを読み込んで、現在のデータを上書きしますか？")) {
-                        players = jsonPlayers.map(row => ({
-                            id: row["ID"],
-                            name: row["名前"]
-                        }));
-
-                        matches = [];
-                        jsonMatches.forEach(row => {
-                            const wName = row["勝者"];
-                            const lName = row["敗者"];
-                            const wObj = players.find(p => p.name === wName);
-                            const lObj = players.find(p => p.name === lName);
-                            if(wObj && lObj) {
-                                matches.push({
-                                    winner: wObj.id,
-                                    loser: lObj.id,
-                                    timestamp: row["対戦日"] ? new Date(row["対戦日"]).getTime() : Date.now()
-                                });
-                            }
-                        });
-
-                        const now = new Date();
-                        lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-
-                        saveData();
-                        renderAll();
-                        alert("読み込み完了！");
-                    }
-
-                } catch(err) {
-                    console.error(err);
-                    alert("読み込みに失敗しました。");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-            input.value = '';
-        }
-
-        // --- メインロジック ---
-        function renderAll() {
-            try {
-                updateSelectOptions();
-                renderPlayerInputs();
-                calculateAndRender();
-                renderHistory();
-                renderLastUpdated(); 
-                saveData();
-            } catch(e) { console.error("Rendering Error:", e); }
-        }
-
-        function updateSelectOptions() {
-            const wSelect = document.getElementById('winnerSelect');
-            const lSelect = document.getElementById('loserSelect');
-            if(!wSelect || !lSelect) return;
-            const wVal = wSelect.value;
-            const lVal = lSelect.value;
-            wSelect.innerHTML = ''; lSelect.innerHTML = '';
-            players.forEach(p => {
-                const optW = document.createElement('option'); optW.value = p.id; optW.text = p.name; wSelect.appendChild(optW);
-                const optL = document.createElement('option'); optL.value = p.id; optL.text = p.name; lSelect.appendChild(optL);
-            });
-            if(wVal) wSelect.value = wVal;
-            if(lVal) lSelect.value = lVal;
-            if (players.length > 1 && lSelect.value === wSelect.value) {
-                lSelect.selectedIndex = (wSelect.selectedIndex + 1) % players.length;
-            }
-        }
-
-        function registerMatch() {
-            const wId = parseInt(document.getElementById('winnerSelect').value);
-            const lId = parseInt(document.getElementById('loserSelect').value);
-            if (wId === lId) { alert("勝者と敗者が同じです"); return; }
-            matches.push({ winner: wId, loser: lId, timestamp: Date.now() });
-            const now = new Date();
-            lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-            renderAll();
-        }
-
-        function calculateAndRender() {
-            let stats = players.map(p => ({
-                id: p.id, name: p.name, wins: 0, losses: 0, total: 0, vs: Array(players.length).fill(0), currentStreak: 0
-            }));
-
-            matches.forEach(m => {
-                if (!stats[m.winner] || !stats[m.loser]) return;
-                stats[m.winner].wins++; stats[m.winner].total++; stats[m.winner].vs[m.loser]++; 
-                stats[m.loser].losses++; stats[m.loser].total++;
-
-                if (stats[m.winner].currentStreak < 0) stats[m.winner].currentStreak = 1; else stats[m.winner].currentStreak++;
-                if (stats[m.loser].currentStreak > 0) stats[m.loser].currentStreak = -1; else stats[m.loser].currentStreak--;
-            });
-
-            // Banner
-            const banner = document.getElementById('streakBanner');
-            let topStreak = 0; let topStreakerName = "";
-            stats.forEach(s => {
-                if (s.currentStreak >= 3 && s.currentStreak > topStreak) { topStreak = s.currentStreak; topStreakerName = s.name; }
-            });
-            if (banner) {
-                if (topStreak > 0) {
-                    banner.style.display = "block";
-                    banner.innerHTML = `🔥 現在 ${topStreakerName} さんが ${topStreak}連勝中！ 誰か止めろ！ 🔥`;
-                } else { banner.style.display = "none"; }
-            }
-
-            // Ranking
-            let ranking = [...stats].sort((a, b) => {
-                const rateA = a.total ? a.wins / a.total : 0; const rateB = b.total ? b.wins / b.total : 0;
-                if (rateB !== rateA) return rateB - rateA; return b.wins - a.wins;
-            });
-
-            const rBody = document.getElementById('rankingBody');
-            if(rBody) {
-                rBody.innerHTML = '';
-                ranking.forEach((s, i) => {
-                    const tr = document.createElement('tr');
-                    let nameHtml = s.name; let badges = "";
-                    if (i === 0 && s.total > 0) { tr.classList.add('rank-1'); badges += `<span class="badge badge-crown">👑</span>`; }
-                    if (s.currentStreak >= 3) badges += `<span class="badge badge-fire">🔥 ${s.currentStreak}連勝</span>`;
-                    if (s.currentStreak <= -3) badges += `<span class="badge badge-rain">☔ ${Math.abs(s.currentStreak)}連敗</span>`;
-                    if (badges) nameHtml += `<br>${badges}`;
-                    const rate = s.total ? (s.wins / s.total * 100).toFixed(1) : "0.0";
-                    tr.innerHTML = `<td style="font-weight:bold; color:var(--neon-blue)">${i + 1}</td><td style="font-weight:bold; font-size:1.1rem; line-height:1.4;">${nameHtml}</td><td><span class="score-win">${s.wins}</span> - <span class="score-loss">${s.losses}</span></td><td>${rate}%</td><td>${s.total}</td>`;
-                    rBody.appendChild(tr);
-                });
-            }
-
-            // Matrix
-            const mHead = document.getElementById('matrixHead'); const mBody = document.getElementById('matrixBody');
-            if(mHead && mBody) {
-                let hHtml = '<tr><th></th>'; players.forEach(p => hHtml += `<th>${p.name}</th>`); hHtml += '</tr>'; mHead.innerHTML = hHtml;
-                mBody.innerHTML = '';
-                stats.forEach((rowP, i) => {
-                   const tr = document.createElement('tr'); let rowHtml = `<th>${rowP.name}</th>`;
-                   players.forEach((colP, j) => {
-                       if (i === j) rowHtml += '<td class="diagonal-cell"></td>';
-                       else {
-                           const wins = stats[i].vs[j]; const losses = stats[j].vs[i];
-                           let content = '-'; if (wins > 0 || losses > 0) content = `<span class="score-win">${wins}</span> - <span class="score-loss">${losses}</span>`;
-                           rowHtml += `<td class="score-cell">${content}</td>`;
-                       }
-                   });
-                   tr.innerHTML = rowHtml; mBody.appendChild(tr);
-                });
-            }
-            
-            renderCharts(stats);
-        }
-
-        function renderCharts(statsData) {
-            const container = document.getElementById('statsList');
-            if(!container) return;
-            chartInstances.forEach(c => c.destroy()); chartInstances = []; container.innerHTML = '';
-            
-            statsData.forEach(p => {
-                const card = document.createElement('div'); card.className = 'stats-card';
-                
-                const opponents = players.filter(opp => opp.id !== p.id);
-                let chartsHtml = `<div class="charts-container">`;
-                
-                opponents.forEach(opp => {
-                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
-                    const win = p.vs[opp.id];
-                    const loss = statsData[opp.id].vs[p.id];
-                    
-                    chartsHtml += `
-                        <div class="chart-wrapper">
-                            <div class="chart-title">vs ${opp.name}</div>
-                            <div style="height:140px;">
-                                <canvas id="${canvasId}"></canvas>
-                            </div>
-                            <div class="chart-score">
-                                <span class="score-win">${win}勝</span> - <span class="score-loss">${loss}敗</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                chartsHtml += `</div>`;
-
-                card.innerHTML = `<div class="stats-header">${p.name}</div>` + chartsHtml;
-                container.appendChild(card);
-
-                opponents.forEach(opp => {
-                    const canvasId = `chart-${p.id}-vs-${opp.id}`;
-                    const ctx = document.getElementById(canvasId).getContext('2d');
-                    const win = p.vs[opp.id];
-                    const loss = statsData[opp.id].vs[p.id];
-
-                    let chartData = [win, loss];
-                    let chartColors = ['#ff00ff', '#00ffff'];
-                    if (win === 0 && loss === 0) {
-                        chartData = [1]; chartColors = ['#333']; 
-                    }
-
-                    chartInstances.push(new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Win', 'Loss'],
-                            datasets: [{
-                                data: chartData,
-                                backgroundColor: chartColors,
-                                borderWidth: 0
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: { enabled: (win > 0 || loss > 0) }
-                            }
-                        }
-                    }));
-                });
-            });
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('historyList');
-            if(!list) return;
-            list.innerHTML = '';
-            const reversedMatches = [...matches].reverse();
-            reversedMatches.forEach((m, revIndex) => {
-                const originalIndex = matches.length - 1 - revIndex;
-                const winnerName = players[m.winner] ? players[m.winner].name : "不明";
-                const loserName = players[m.loser] ? players[m.loser].name : "不明";
-                const div = document.createElement('div'); div.className = 'history-item';
-                div.innerHTML = `<div class="history-text"><span style="color:var(--neon-pink)">○ ${winnerName}</span> vs <span style="color:var(--neon-blue)">● ${loserName}</span></div><button class="delete-history-btn" onclick="deleteMatch(${originalIndex})">取消</button>`;
-                list.appendChild(div);
-            });
-            if (matches.length === 0) list.innerHTML = '<div style="color:#666; text-align:center; padding:10px;">対局履歴なし</div>';
-        }
-
-        function renderLastUpdated() {
-            const el = document.getElementById('lastUpdatedDisplay');
-            if(el) el.innerText = lastUpdated ? `Last Updated: ${lastUpdated}` : `Last Updated: ----/--/-- --:--`;
-        }
-
-        function deleteMatch(index) {
-            if(confirm("取り消しますか？")) {
-                matches.splice(index, 1);
-                const now = new Date();
-                lastUpdated = now.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                renderAll();
-            }
-        }
-
-        function renderPlayerInputs() {
-            const container = document.getElementById('playerList');
-            if(!container) return;
-            container.innerHTML = '';
-            players.forEach((p, index) => {
-                const div = document.createElement('div'); div.className = 'player-input-row';
-                div.innerHTML = `<span style="color:#666; width:30px;">#${index + 1}</span><input type="text" value="${p.name}" oninput="updateName(${index}, this.value)">`;
-                container.appendChild(div);
-            });
-        }
-        function updateName(idx, val) { players[idx].name = val; updateSelectOptions(); calculateAndRender(); saveData(); }
-        function addPlayer() { const newId = players.length; players.push({ id: newId, name: `プレイヤー${newId + 1}` }); renderAll(); }
-        function removePlayer() {
-            if (players.length <= 2) { alert("最低2名必要です"); return; }
-            if(!confirm("削除しますか？")) return;
-            const removedId = players.length - 1; players.pop();
-            matches = matches.filter(m => m.winner !== removedId && m.loser !== removedId); renderAll();
-        }
-
-        function saveData() {
-            const data = { players, matches, lastUpdated };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            const el = document.getElementById('saveStatus');
-            if(el) el.innerText = "自動保存中...";
-        }
-    </script>
-</body>
-</html>
+            // ★ ファイルの最終更新日時を取得してセット
+            const fileDate = new Date(file.lastModified);
+            const formattedDate = fileDate.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit',
